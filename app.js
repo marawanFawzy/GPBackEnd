@@ -1,29 +1,34 @@
 require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
+const mongoSanitize = require("express-mongo-sanitize");
+
 const helmet = require("helmet");
 const morgan = require("morgan");
 const xss = require("xss-clean");
+const date = require('date-and-time');
+
 const mongoose = require("mongoose");
-const hpp = require("hpp");
-const mongoSanitize = require("express-mongo-sanitize");
+
+const path = require("path");
 const cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
+
 var cors = require("cors");
+const hpp = require("hpp");
+
 var app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb" }));
 app.use(bodyParser.json({ type: "application/*+json", inflate: false }));
-// app.use(bodyParser.json())
 app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type , Auzhorization");
   next();
 });
-
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(mongoSanitize());
@@ -36,8 +41,16 @@ app.use(
     exposedHeaders: ["set-cookie"],
   })
 );
-//add logic from here 
-app.use("/" , (req , res , next )=>{
-    console.log("running")
+
+const adminRoutes = require('./routes/admin');
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user');
+
+app.use(authRoutes);
+app.use(adminRoutes);
+app.use(userRoutes);
+//not found handler 
+app.use((req,res,next)=>{
+  res.status(404).send('<h1>not found</h1>')
 })
 const server = app.listen(3000);
