@@ -1,10 +1,7 @@
 const express = require('express');
 const path = require('path')
-
+const adminController = require('../controllers/admin.js');
 const router = express.Router();
 
-router.get('/admin', (req, res, next) => {
-    console.log("admin");
-    res.status(200).sendFile(path.join(__dirname, '..', 'views', 'admin.html'));
-})
+router.get('/admin', adminController.adminPage)
 module.exports = router

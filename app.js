@@ -42,7 +42,8 @@ app.use(
     exposedHeaders: ["set-cookie"],
   })
 );
-
+app.set('view engine', 'ejs')
+app.set('views', 'views')
 const adminRoutes = require('./routes/admin');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
