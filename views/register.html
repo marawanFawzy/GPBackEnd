@@ -14,14 +14,14 @@
         <nav class="main-header__nav">
             <ul class="main-header__item-list">
                 <li class="main-header__item"><a href="/home">home</a></li>
-                <li class="main-header__item"><a class="active" href="/login">login</a></li>
-                <li class="main-header__item"><a href="/register">register</a></li>
+                <li class="main-header__item"><a href="/login">login</a></li>
+                <li class="main-header__item"><a class="active" href="/register">register</a></li>
             </ul>
         </nav>
     </header>
     <main>
-        <h1>login page</h1>
-        <form class="product-form" action="/checkUser" method="POST">
+        <h1>register page</h1>
+        <form class="product-form" action="/adduser" method="POST">
             <div class="form-control">
                 <label for="name">name</label>
                 <input type="text" name="name" id="name">
@@ -29,7 +29,7 @@
                 <input type="text" name="password" id="password">
             </div>
 
-            <button type="submit">login</button>
+            <button type="submit">register</button>
         </form>
     </main>
 </body>

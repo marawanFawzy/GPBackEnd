@@ -22,6 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb" }));
 app.use(bodyParser.json({ type: "application/*+json", inflate: false }));
+app.use(express.static(path.join(__dirname , 'public')))
 app.use(cookieParser());
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -49,12 +50,10 @@ const userRoutes = require('./routes/user');
 app.use(authRoutes);
 app.use(adminRoutes);
 app.use(userRoutes);
+
 //not found handler 
-app.use('/',(req,res,next)=>{
-  res.redirect('/home')
-})
-app.use((req,res,next)=>{
-  res.status(404).send('<h1>not found</h1>')
-})
+app.use((req, res, next) => {
+  res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+});
 
 const server = app.listen(3000);
