@@ -1,0 +1,15 @@
+<%- include('head.ejs') %>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+
+<body>
+   <%- include('navigationUser.ejs') %>
+    <main>
+        <form class="form-frame" action="/home" method="get">
+            <div class="form-control">
+                <label for="code">code</label>
+                <input type="text" name="code" id="code">
+            </div>
+            <button class="btn" type="submit">check</button>
+        </form>
+    </main>
