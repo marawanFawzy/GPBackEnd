@@ -1,6 +1,6 @@
 const express = require('express');
 const rateLimit = require("express-rate-limit")
-const authController = require('../controllers/auth')
+const authController = require('../controllers/common')
 const path = require('path')
 
 const router = express.Router();

@@ -5,7 +5,23 @@
     <body>
         <%- include('navigationUser.ejs') %>
             <main>
-                <h1 class="name">
-                    register
-                </h1>
+                <form class="form-frame" action="/adduser" method="post">
+                    <div class="form-control">
+                        <label for="username">username</label>
+                        <input type="text" name="username" id="username">
+                    </div>
+                    <div class="form-control">
+                        <label for="name">name</label>
+                        <input type="text" name="name" id="name">
+                    </div>
+                    <div class="form-control">
+                        <label for="mail">mail</label>
+                        <input type="text" name="mail" id="mail" step="0.01">
+                    </div>
+                    <div class="form-control">
+                        <label for="password">password</label>
+                        <input type="password" name="password" id="password" step="0.01">
+                    </div>
+                    <button class="btn" type="submit">register</button>
+                </form>
             </main>
