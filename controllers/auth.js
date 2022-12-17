@@ -29,7 +29,13 @@ exports.adduser = (req, res, next) => {
 };
 exports.confirmOTP = (req, res, next) => {
     console.log("confirm OTP");
-    res.status(200).send("<h1>confirm OTP</h1>");
+    console.log("checkuser");
+    console.log(req.body);
+    const code = req.body.code;
+    if (code === 'test')
+        res.redirect('/home')
+    else
+        res.redirect('/otp')
 };
 exports.checkuser = (req, res, next) => {
     console.log("checkuser");
@@ -38,5 +44,5 @@ exports.checkuser = (req, res, next) => {
     if (password === 'test')
         res.redirect('/otp')
     else
-    res.redirect('/login')
+        res.redirect('/login')
 };

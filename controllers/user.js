@@ -7,3 +7,22 @@ exports.home = (req, res, next) => {
         path: '/home'
     });
 };
+exports.upload = (req, res, next) => {
+    const image = req.file;
+    console.log(req.body);
+    console.log(req.file);
+    if (!image) {
+        return res.status(422).render('home', {
+            pageTitle: 'home page',
+            name: 'Attached file is not an image.',
+            path: '/home'
+        });
+    }
+    else {
+        return res.status(201).render('home', {
+            pageTitle: 'home page',
+            name: 'uploaded',
+            path: '/home'
+        });
+    }
+}

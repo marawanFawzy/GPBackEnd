@@ -7,6 +7,8 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const xss = require("xss-clean");
 const date = require('date-and-time');
+const multer = require('multer');
+
 
 const mongoose = require("mongoose");
 
@@ -18,11 +20,39 @@ var cors = require("cors");
 const hpp = require("hpp");
 
 var app = express();
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ limit: "50mb" }));
+
+
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'images');
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + '-' + file.originalname);
+  }
+});
+
+const Filter = (req, file, cb) => {
+  if (
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg' ||
+    file.mimetype === 'image/jpeg'
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+const fileSizeLimitErrorHandler = (err, req, res, next) => {
+  if (err) {
+    res.status(413).render('413', { pageTitle: 'large File Provided', path: '/413' });
+  } else {
+    next()
+  }
+}
+app.use(bodyParser.json({ limit: '2mb' }));
+app.use(bodyParser.urlencoded({ limit: '2mb', extended: true }));
 app.use(bodyParser.json({ type: "application/*+json", inflate: false }));
-app.use(express.static(path.join(__dirname , 'public')))
+app.use(express.static(path.join(__dirname, 'public')))
 app.use(cookieParser());
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -47,7 +77,11 @@ app.set('views', 'views');
 const adminRoutes = require('./routes/admin');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
-
+app.use(multer(
+  {
+    storage: fileStorage,
+    fileFilter: Filter, limits: { fileSize: 78982 }
+  }).single('image'), fileSizeLimitErrorHandler);
 app.use(authRoutes);
 app.use(adminRoutes);
 app.use(userRoutes);
