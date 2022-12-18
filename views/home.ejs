@@ -3,16 +3,20 @@
     </head>
 
     <body>
-        <%- include('navigationUser.ejs') %>
-            <main>
-                <h1 class="name">
-                    welcome home <%= name %>
-                </h1>
-                <form class="form-frame" action="/upload" method="post" enctype="multipart/form-data">
-                    <div class="form-control">
-                        <label for="image">Image</label>
-                        <input type="file" name="image" id="image">
-                    </div>
-                    <button class="btn" type="submit">upload</button>
-                </form>
-            </main>
+        <% if (isAdmin) { %>
+            <%- include('navigation.ejs') %>
+                <% } else { %>
+                    <%- include('navigationUser.ejs') %>
+                        <% } %>
+                            <main>
+                                <h1 class="name">
+                                    welcome home <%= name %>
+                                </h1>
+                                <form class="form-frame" action="/upload" method="post" enctype="multipart/form-data">
+                                    <div class="form-control">
+                                        <label for="image">Image</label>
+                                        <input type="file" name="image" id="image">
+                                    </div>
+                                    <button class="btn" type="submit">upload</button>
+                                </form>
+                            </main>

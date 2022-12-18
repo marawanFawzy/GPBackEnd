@@ -21,10 +21,13 @@ const OTPLimiter = rateLimit({
 })
 
 router.get('/login', authController.LoginPage)
+router.post('/login', loginlimiter, authController.Postlogin)
 router.get('/otp', authController.OTPPage)
+router.post('/otp', OTPLimiter, authController.OTPPost)
 router.get('/register', authController.registerPage)
-router.post('/adduser', authController.adduser)
-router.post('/confirm/otp', OTPLimiter, authController.confirmOTP)
-router.post('/checkUser', loginlimiter, authController.checkuser)
+router.post('/register', authController.registerPost)
+router.post('/log-out', authController.logOut)
+
+
 
 module.exports = router

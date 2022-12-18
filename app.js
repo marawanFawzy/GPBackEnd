@@ -2,15 +2,19 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const mongoSanitize = require("express-mongo-sanitize");
-
+const MongoURI = 'mongodb+srv://marawan:01062582636@security.qhsfmpj.mongodb.net/test'
 const helmet = require("helmet");
 const morgan = require("morgan");
 const xss = require("xss-clean");
 const date = require('date-and-time');
 const multer = require('multer');
-
+const mongoDBStore = require('connect-mongodb-session')(session)
 const mongoose = require("mongoose");
-
+mongoose.set('strictQuery', true);
+const store = new mongoDBStore({
+  uri: MongoURI,
+  collection: 'sessions'
+})
 const path = require("path");
 const cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
@@ -44,15 +48,22 @@ const Filter = (req, file, cb) => {
 // large handler 
 const ErrorHandler = (err, req, res, next) => {
   if (err) {
-    res.status(413).render('413', { pageTitle: 'large File Provided', path: '/413' });
+    res.status(413).render('413', { pageTitle: 'large File Provided', path: '/413', isAuthenticated: req.session.isLoggedIn });
   } else {
     next()
   }
 }
+
 app.use(bodyParser.json({ limit: '2mb' }));
 app.use(bodyParser.urlencoded({ limit: '2mb', extended: true }));
 app.use(bodyParser.json({ type: "application/*+json", inflate: false }));
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(session({
+  secret: 'test',
+  resave: false,
+  saveUninitialized: false,
+  store: store,
+}))
 app.use(cookieParser());
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -77,20 +88,21 @@ app.set('views', 'views');
 const adminRoutes = require('./routes/admin');
 const commonRoutes = require('./routes/common');
 const userRoutes = require('./routes/user');
-app.use(multer({ storage: fileStorage, fileFilter: Filter, limits: { fileSize: 78982 } }).single('image'), ErrorHandler);
+const { MongoDBStore } = require("connect-mongodb-session");
+app.use(multer({ storage: fileStorage, fileFilter: Filter, limits: { fileSize: 80000 } }).single('image'), ErrorHandler);
 app.use(commonRoutes);
 app.use(adminRoutes);
 app.use(userRoutes);
 
 //not found handler 
 app.use((req, res, next) => {
-  res.status(404).render('404', { pageTitle: 'Page Not Found', path: '/404' });
+  res.status(404).render('404', { pageTitle: 'Page Not Found', path: '/404', isAuthenticated: req.session.isLoggedIn });
 });
 
 mongoose.connect(
-  'mongodb+srv://marawan:01062582636@security.qhsfmpj.mongodb.net/test'
+  MongoURI
 ).then((result) => {
-  app.listen(3000) 
+  app.listen(3000)
   console.log('connected to database')
 }).catch(err => {
   console.log(err)

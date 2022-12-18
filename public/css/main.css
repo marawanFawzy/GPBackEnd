@@ -260,3 +260,20 @@ form {
     margin: auto;
     display: block;
 }
+.btn-link {
+    border: none;
+    outline: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+    font-size: inherit;
+    display: inline-block;
+    text-decoration: none;
+    font: inherit;
+    color: white;
+}
+.btn-link:hover,
+.btn-link:active {
+  color: yellow;
+}
