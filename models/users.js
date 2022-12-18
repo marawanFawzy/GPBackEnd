@@ -21,6 +21,13 @@ const UserSchema = new Schema({
     {
         type: String,
         required: true
+    },
+    flag:
+    {
+        type: Boolean,
+        required: true,
+        default: false
     }
 })
-module.exports = mongoose.model('User' , UserSchema)
+
+module.exports = mongoose.model('User', UserSchema)

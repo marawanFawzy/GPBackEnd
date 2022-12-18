@@ -1,9 +1,19 @@
+require("dotenv").config();
 const path = require('path')
 const bcryptjs = require("bcryptjs");
 const User = require('../models/users')
+const nodemailer = require("nodemailer");
+let transport = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.MAIL,
+        pass: process.env.PASS
+    }
+});
+
+
 
 exports.LoginPage = (req, res, next) => {
-    console.log("login");
     console.log(req.session.isLoggedIn);
     res.render('login', {
         pageTitle: 'login page',
@@ -12,8 +22,7 @@ exports.LoginPage = (req, res, next) => {
     });
 };
 exports.OTPPage = (req, res, next) => {
-    console.log("otp page");
-    console.log(req.session.isLoggedIn);
+    console.log(req.session);
     res.render('OTP-page', {
         pageTitle: 'OTP page',
         path: '/otp',
@@ -21,8 +30,7 @@ exports.OTPPage = (req, res, next) => {
     });
 };
 exports.registerPage = (req, res, next) => {
-    console.log("register");
-    console.log(req.session.isLoggedIn);
+    console.log(req.session);
     res.render('register', {
         pageTitle: 'register page',
         path: '/register',
@@ -30,7 +38,9 @@ exports.registerPage = (req, res, next) => {
     });
 };
 exports.registerPost = (req, res, next) => {
-    bcryptjs.hash(req.body.password, 16, async (error, hashedpassword) => {
+
+
+    bcryptjs.hash(req.body.password, 10, async (error, hashedpassword) => {
         if (error) {
             return res.status(401).redirect('/register')
         }
@@ -51,7 +61,6 @@ exports.registerPost = (req, res, next) => {
                     })
                     newUser.save()
                         .then(result => {
-                            console.log("done")
                             return res.status(200).redirect('/login')
                         }).catch(err => {
                             console.log(err)
@@ -64,25 +73,29 @@ exports.registerPost = (req, res, next) => {
 
 };
 exports.OTPPost = (req, res, next) => {
-    console.log("confirm OTP");
     console.log(req.body);
     const code = req.body.code;
-    
-    if (code === 'admin') {
+    if (code == req.session.number) {
+        delete req.session.number;
         req.session.isLoggedIn = true;
-        req.session.isAdmin = true;
-        res.redirect('/admin')
+        if (!req.session.isAdmin) {
+            res.redirect('/')
+        }
+        else {
+            res.redirect('/admin')
+        }
+
     }
-    else if (code === 'test') {
-        req.session.isLoggedIn = true;
-        req.session.isAdmin = false;
-        res.redirect('/')
+    else if (code === 60000) {
+        delete req.session.number;
+
+
+
     }
     else
         return res.status(401).redirect('/otp')
 };
 exports.Postlogin = (req, res, next) => {
-    console.log("checkuser");
     console.log(req.body);
     const password = req.body.password
     User.findOne({ username: req.body.username })
@@ -91,6 +104,25 @@ exports.Postlogin = (req, res, next) => {
                 bcryptjs.compare(password, user.password)
                     .then((correct) => {
                         if (correct) {
+                            req.session.number = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
+                            if (user.flag)
+                                req.session.isAdmin = true;
+                            else
+                                req.session.isAdmin = false;
+                            const d = new Date();
+                            let options = {
+                                from: process.env.MAIL,
+                                to: user.mail,
+                                subject: 'OTP',
+                                text: req.session.number + ' this OTP expires after 10 minutes at ' + new Date(d.getTime() + 60000)
+                            }
+                            transport.sendMail(options, (err, data) => {
+                                if (err)
+                                    console.log(err)
+                                else {
+                                    console.log("sent")
+                                }
+                            })
                             return res.status(401).redirect('/otp')
                         } else {
                             return res.status(401).redirect('/login')
@@ -104,9 +136,8 @@ exports.Postlogin = (req, res, next) => {
             console.log(err);
         })
 };
-exports.logOut = (req, res,next) =>{
-    req.session.destroy(()=>{
-        console.log('out');
+exports.logOut = (req, res, next) => {
+    req.session.destroy(() => {
         res.redirect('/login')
     });
 };

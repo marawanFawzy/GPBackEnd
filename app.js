@@ -6,7 +6,6 @@ const MongoURI = 'mongodb+srv://marawan:01062582636@security.qhsfmpj.mongodb.net
 const helmet = require("helmet");
 const morgan = require("morgan");
 const xss = require("xss-clean");
-const date = require('date-and-time');
 const multer = require('multer');
 const mongoDBStore = require('connect-mongodb-session')(session)
 const mongoose = require("mongoose");
@@ -18,6 +17,7 @@ const store = new mongoDBStore({
 const path = require("path");
 const cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
+
 
 var cors = require("cors");
 const hpp = require("hpp");
@@ -48,7 +48,7 @@ const Filter = (req, file, cb) => {
 // large handler 
 const ErrorHandler = (err, req, res, next) => {
   if (err) {
-    res.status(413).render('413', { pageTitle: 'large File Provided', path: '/413', isAuthenticated: req.session.isLoggedIn });
+    res.status(413).render('413', { pageTitle: 'large File Provided', path: '/413', isAuthenticated: req.session.isLoggedIn || false });
   } else {
     next()
   }
@@ -63,6 +63,11 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: store,
+  rolling: true,
+  cookie: {
+    expires: 10 * 60 * 1000
+  },
+
 }))
 app.use(cookieParser());
 app.use((req, res, next) => {
@@ -72,7 +77,6 @@ app.use((req, res, next) => {
   next();
 });
 app.use(helmet());
-app.use(morgan("dev"));
 app.use(mongoSanitize());
 app.use(xss());
 app.use(hpp());
