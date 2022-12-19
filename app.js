@@ -2,9 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const mongoSanitize = require("express-mongo-sanitize");
-const MongoURI = 'mongodb+srv://marawan:01062582636@security.qhsfmpj.mongodb.net/test'
+const MongoURI = 'mongodb+srv://'+process.env.mongoName+':'+process.env.mongoPass+'@security.qhsfmpj.mongodb.net/test'
 const helmet = require("helmet");
-const morgan = require("morgan");
 const xss = require("xss-clean");
 const multer = require('multer');
 const mongoDBStore = require('connect-mongodb-session')(session)
@@ -23,7 +22,6 @@ var cors = require("cors");
 const hpp = require("hpp");
 
 var app = express();
-
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -45,7 +43,7 @@ const Filter = (req, file, cb) => {
     cb(null, false);
   }
 };
-// large handler 
+// large file handler 
 const ErrorHandler = (err, req, res, next) => {
   if (err) {
     res.status(413).render('413', { pageTitle: 'large File Provided', path: '/413', isAuthenticated: req.session.isLoggedIn || false });

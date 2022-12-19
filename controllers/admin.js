@@ -1,4 +1,3 @@
-const path = require('path')
 exports.adminPage = (req, res, next) => {
     res.render('admin', {
         pageTitle: 'admin page',

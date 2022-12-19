@@ -1,20 +1,17 @@
 require("dotenv").config();
-const path = require('path')
 const bcryptjs = require("bcryptjs");
 const User = require('../models/users')
-const nodemailer = require("nodemailer");
+const nodemailer = require('nodemailer')
 let transport = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: process.env.MAIL,
-        pass: process.env.PASS
+        pass: process.env.PASS,
     }
-});
-
+})
 
 
 exports.LoginPage = (req, res, next) => {
-    console.log(req.session.isLoggedIn);
     res.render('login', {
         pageTitle: 'login page',
         path: '/login',
@@ -22,7 +19,6 @@ exports.LoginPage = (req, res, next) => {
     });
 };
 exports.OTPPage = (req, res, next) => {
-    console.log(req.session);
     res.render('OTP-page', {
         pageTitle: 'OTP page',
         path: '/otp',
@@ -30,7 +26,6 @@ exports.OTPPage = (req, res, next) => {
     });
 };
 exports.registerPage = (req, res, next) => {
-    console.log(req.session);
     res.render('register', {
         pageTitle: 'register page',
         path: '/register',
@@ -38,13 +33,11 @@ exports.registerPage = (req, res, next) => {
     });
 };
 exports.registerPost = (req, res, next) => {
-
-
     bcryptjs.hash(req.body.password, 10, async (error, hashedpassword) => {
         if (error) {
             return res.status(401).redirect('/register')
         }
-        User.findOne({ username: req.body.username })
+        User.findOne({ username: req.body.username }) //
             .then(user => {
                 if (user) {
                     if (user.username === req.body.username) {
@@ -73,10 +66,9 @@ exports.registerPost = (req, res, next) => {
 
 };
 exports.OTPPost = (req, res, next) => {
-    console.log(req.body);
     const code = req.body.code;
     if (code == req.session.number) {
-        delete req.session.number;
+        delete req.session.number
         req.session.isLoggedIn = true;
         if (!req.session.isAdmin) {
             res.redirect('/')
@@ -84,19 +76,11 @@ exports.OTPPost = (req, res, next) => {
         else {
             res.redirect('/admin')
         }
-
-    }
-    else if (code === 60000) {
-        delete req.session.number;
-
-
-
     }
     else
         return res.status(401).redirect('/otp')
 };
 exports.Postlogin = (req, res, next) => {
-    console.log(req.body);
     const password = req.body.password
     User.findOne({ username: req.body.username })
         .then(user => {
@@ -104,25 +88,24 @@ exports.Postlogin = (req, res, next) => {
                 bcryptjs.compare(password, user.password)
                     .then((correct) => {
                         if (correct) {
-                            req.session.number = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
-                            if (user.flag)
-                                req.session.isAdmin = true;
-                            else
-                                req.session.isAdmin = false;
+                            req.session.number = Math.floor(Math.random() * 999999 - 1000000 + 1) + 1000000
                             const d = new Date();
                             let options = {
                                 from: process.env.MAIL,
                                 to: user.mail,
-                                subject: 'OTP',
-                                text: req.session.number + ' this OTP expires after 10 minutes at ' + new Date(d.getTime() + 60000)
+                                subject: 'Your OTP',
+                                text: 'your OTP is ' + req.session.number + ' this OTP Expires after 10 minutes at ' + new Date(d.getTime() + 600000)
                             }
                             transport.sendMail(options, (err, data) => {
                                 if (err)
                                     console.log(err)
-                                else {
-                                    console.log("sent")
-                                }
+                                else
+                                    console.log('done')
                             })
+                            if (user.flag)
+                                req.session.isAdmin = true;
+                            else
+                                req.session.isAdmin = false;
                             return res.status(401).redirect('/otp')
                         } else {
                             return res.status(401).redirect('/login')

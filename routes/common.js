@@ -1,7 +1,6 @@
 const express = require('express');
 const rateLimit = require("express-rate-limit")
-const authController = require('../controllers/common')
-const path = require('path')
+const commonController = require('../controllers/common')
 
 const router = express.Router();
 
@@ -20,13 +19,13 @@ const OTPLimiter = rateLimit({
     message: 'You have exceeded the 3 requests in OTP please wait 10 minutes',
 })
 
-router.get('/login', authController.LoginPage)
-router.post('/login', loginlimiter, authController.Postlogin)
-router.get('/otp', authController.OTPPage)
-router.post('/otp', OTPLimiter, authController.OTPPost)
-router.get('/register', authController.registerPage)
-router.post('/register', authController.registerPost)
-router.post('/log-out', authController.logOut)
+router.get('/login', commonController.LoginPage)
+router.post('/login', loginlimiter, commonController.Postlogin)
+router.get('/otp', commonController.OTPPage)
+router.post('/otp', OTPLimiter, commonController.OTPPost)
+router.get('/register', commonController.registerPage)
+router.post('/register', commonController.registerPost)
+router.post('/log-out', commonController.logOut)
 
 
 

@@ -1,4 +1,3 @@
-const path = require('path')
 exports.home = (req, res, next) => {
     res.render('home', {
         pageTitle: 'home page',
@@ -10,8 +9,6 @@ exports.home = (req, res, next) => {
 };
 exports.upload = (req, res, next) => {
     const image = req.file;
-    console.log(req.body);
-    console.log(req.file);
     if (!image) {
         return res.status(422).render('home', {
             pageTitle: 'home page',
