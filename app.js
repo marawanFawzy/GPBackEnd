@@ -7,19 +7,17 @@ const helmet = require("helmet");
 const xss = require("xss-clean");
 const multer = require('multer');
 const mongoDBStore = require('connect-mongodb-session')(session)
+const path = require("path");
+const cookieParser = require("cookie-parser");
+var bodyParser = require("body-parser");
+var cors = require("cors");
+const hpp = require("hpp");
 const mongoose = require("mongoose");
 mongoose.set('strictQuery', true);
 const store = new mongoDBStore({
   uri: MongoURI,
   collection: 'sessions'
 })
-const path = require("path");
-const cookieParser = require("cookie-parser");
-var bodyParser = require("body-parser");
-
-
-var cors = require("cors");
-const hpp = require("hpp");
 
 var app = express();
 
@@ -46,7 +44,7 @@ const Filter = (req, file, cb) => {
 // large file handler 
 const ErrorHandler = (err, req, res, next) => {
   if (err) {
-    res.status(413).render('413', { pageTitle: 'large File Provided', path: '/413', isAuthenticated: req.session.isLoggedIn || false });
+    res.status(413).render('413', { pageTitle: 'large File Provided', path: '/413', isAuthenticated: false });
   } else {
     next()
   }
@@ -77,9 +75,9 @@ app.use(session({
 
 }))
 
-app.use(helmet());
+//app.use(helmet());
 app.use(mongoSanitize());
-app.use(xss());
+//app.use(xss());
 app.use(hpp());
 app.use(
   cors({
@@ -93,7 +91,6 @@ app.set('views', 'views');
 const adminRoutes = require('./routes/admin');
 const commonRoutes = require('./routes/common');
 const userRoutes = require('./routes/user');
-const { MongoDBStore } = require("connect-mongodb-session");
 app.use(multer({ storage: fileStorage, fileFilter: Filter, limits: { fileSize: 80000 } }).single('image'), ErrorHandler);
 app.use(commonRoutes);
 app.use(adminRoutes);

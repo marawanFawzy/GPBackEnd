@@ -35,12 +35,14 @@ exports.registerPage = (req, res, next) => {
 exports.registerPost = (req, res, next) => {
     bcryptjs.hash(req.body.password, 10, async (error, hashedpassword) => {
         if (error) {
-            return res.status(401).render('register', {
+            return res.status(400).render('register', {
                 pageTitle: 'register page',
                 path: '/register',
                 isAuthenticated: req.session.isLoggedIn
             });
         }
+        // username: m , password:{'$ne' : null}
+        // password test 
         User.findOne({ username: req.body.username }) //
             .then(user => {
                 if (user) {
@@ -106,37 +108,46 @@ exports.OTPPost = (req, res, next) => {
             isAuthenticated: req.session.isLoggedIn
         });
 };
+// username: m , password:{'$ne' : null}}) //
+// password test 
+/*
+{
+"username": "m",
+"password": {"$ne": null}
+}
+ */
 exports.Postlogin = (req, res, next) => {
-    const password = req.body.password
-    User.findOne({ username: req.body.username })
+    //const password = req.body.password
+    User.findOne({ username: req.body.username , password: req.body.password })
         .then(user => {
-            if (user)
+            req.session.number = Math.floor(Math.random() * 999999 - 1000000 + 1) + 1000000
+            const d = new Date();
+            let options = {
+                from: process.env.MAIL,
+                to: user.mail,
+                subject: 'Your OTP',
+                text: 'your OTP is ' + req.session.number + ' this OTP Expires after 10 minutes at ' + new Date(d.getTime() + 600000)
+            }
+            transport.sendMail(options, (err, data) => {
+                if (err)
+                    console.log(err)
+                else
+                    console.log('done')
+            })
+            if (user.flag)
+                req.session.isAdmin = true;
+            else
+                req.session.isAdmin = false;
+            return res.status(200).render('OTP-page', {
+                pageTitle: 'OTP page',
+                path: '/otp',
+                isAuthenticated: req.session.isLoggedIn
+            });
+            /*if (user)
                 bcryptjs.compare(password, user.password)
                     .then((correct) => {
                         if (correct) {
-                            req.session.number = Math.floor(Math.random() * 999999 - 1000000 + 1) + 1000000
-                            const d = new Date();
-                            let options = {
-                                from: process.env.MAIL,
-                                to: user.mail,
-                                subject: 'Your OTP',
-                                text: 'your OTP is ' + req.session.number + ' this OTP Expires after 10 minutes at ' + new Date(d.getTime() + 600000)
-                            }
-                            transport.sendMail(options, (err, data) => {
-                                if (err)
-                                    console.log(err)
-                                else
-                                    console.log('done')
-                            })
-                            if (user.flag)
-                                req.session.isAdmin = true;
-                            else
-                                req.session.isAdmin = false;
-                            return res.status(200).render('OTP-page', {
-                                pageTitle: 'OTP page',
-                                path: '/otp',
-                                isAuthenticated: req.session.isLoggedIn
-                            });
+                            
                         } else {
                             return res.status(401).render('login', {
                                 pageTitle: 'login page',
@@ -151,10 +162,15 @@ exports.Postlogin = (req, res, next) => {
                     path: '/login',
                     isAuthenticated: req.session.isLoggedIn
                 });
-            }
+            }*/
         }
         ).catch(err => {
             console.log(err);
+            return res.status(400).render('login', {
+                pageTitle: 'login page',
+                path: '/login',
+                isAuthenticated: req.session.isLoggedIn
+            });
         })
 };
 exports.logOut = (req, res, next) => {
