@@ -72,8 +72,6 @@ app.use(session({
   rolling: true,
   cookie: {
     expires: 10 * 60 * 1000,
-    secure: true, 
-    sameSite: true,
   },
  
 

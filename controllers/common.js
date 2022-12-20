@@ -162,7 +162,7 @@ exports.logOut = (req, res, next) => {
         res.render('login', {
             pageTitle: 'login page',
             path: '/login',
-            isAuthenticated: req.session.isLoggedIn
+            isAuthenticated: false
         });
     });
 };
