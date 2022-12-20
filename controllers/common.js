@@ -35,14 +35,22 @@ exports.registerPage = (req, res, next) => {
 exports.registerPost = (req, res, next) => {
     bcryptjs.hash(req.body.password, 10, async (error, hashedpassword) => {
         if (error) {
-            return res.status(401).redirect('/register')
+            return res.status(401).render('register', {
+                pageTitle: 'register page',
+                path: '/register',
+                isAuthenticated: req.session.isLoggedIn
+            });
         }
         User.findOne({ username: req.body.username }) //
             .then(user => {
                 if (user) {
                     if (user.username === req.body.username) {
                         console.log("username is used")
-                        return res.status(401).redirect('/register')
+                        return res.status(401).render('register', {
+                            pageTitle: 'register page',
+                            path: '/register',
+                            isAuthenticated: req.session.isLoggedIn
+                        });
                     }
                 }
                 else {
@@ -54,7 +62,11 @@ exports.registerPost = (req, res, next) => {
                     })
                     newUser.save()
                         .then(result => {
-                            return res.status(200).redirect('/login')
+                            return res.status(200).render('login', {
+                                pageTitle: 'login page',
+                                path: '/login',
+                                isAuthenticated: req.session.isLoggedIn
+                            });
                         }).catch(err => {
                             console.log(err)
                         });
@@ -71,14 +83,28 @@ exports.OTPPost = (req, res, next) => {
         delete req.session.number
         req.session.isLoggedIn = true;
         if (!req.session.isAdmin) {
-            res.redirect('/')
+            res.render('home', {
+                pageTitle: 'home page',
+                name: 'marawan',
+                path: '/',
+                isAuthenticated: req.session.isLoggedIn,
+                isAdmin: req.session.isAdmin,
+            });
         }
         else {
-            res.redirect('/admin')
+            res.render('admin', {
+                pageTitle: 'admin page',
+                name: 'marawan',
+                path: '/admin',
+            });
         }
     }
     else
-        return res.status(401).redirect('/otp')
+        return res.status(401).render('OTP-page', {
+            pageTitle: 'OTP page',
+            path: '/otp',
+            isAuthenticated: req.session.isLoggedIn
+        });
 };
 exports.Postlogin = (req, res, next) => {
     const password = req.body.password
@@ -106,13 +132,25 @@ exports.Postlogin = (req, res, next) => {
                                 req.session.isAdmin = true;
                             else
                                 req.session.isAdmin = false;
-                            return res.status(401).redirect('/otp')
+                            return res.status(200).render('OTP-page', {
+                                pageTitle: 'OTP page',
+                                path: '/otp',
+                                isAuthenticated: req.session.isLoggedIn
+                            });
                         } else {
-                            return res.status(401).redirect('/login')
+                            return res.status(401).render('login', {
+                                pageTitle: 'login page',
+                                path: '/login',
+                                isAuthenticated: req.session.isLoggedIn
+                            });
                         }
                     });
             else {
-                return res.status(401).redirect('/login')
+                return res.status(401).render('login', {
+                    pageTitle: 'login page',
+                    path: '/login',
+                    isAuthenticated: req.session.isLoggedIn
+                });
             }
         }
         ).catch(err => {
@@ -121,6 +159,10 @@ exports.Postlogin = (req, res, next) => {
 };
 exports.logOut = (req, res, next) => {
     req.session.destroy(() => {
-        res.redirect('/login')
+        res.render('login', {
+            pageTitle: 'login page',
+            path: '/login',
+            isAuthenticated: req.session.isLoggedIn
+        });
     });
 };

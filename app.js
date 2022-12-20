@@ -56,17 +56,6 @@ app.use(bodyParser.json({ limit: '2mb' }));
 app.use(bodyParser.urlencoded({ limit: '2mb', extended: true }));
 app.use(bodyParser.json({ type: "application/*+json", inflate: false }));
 app.use(express.static(path.join(__dirname, 'public')))
-app.use(session({
-  secret: 'test',
-  resave: false,
-  saveUninitialized: false,
-  store: store,
-  rolling: true,
-  cookie: {
-    expires: 10 * 60 * 1000
-  },
-
-}))
 app.use(cookieParser());
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -74,6 +63,22 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type , Auzhorization");
   next();
 });
+
+app.use(session({
+  secret: process.env.secret,
+  resave: false,
+  saveUninitialized: false,
+  store: store,
+  rolling: true,
+  cookie: {
+    expires: 10 * 60 * 1000,
+    secure: true, 
+    sameSite: true,
+  },
+ 
+
+}))
+
 app.use(helmet());
 app.use(mongoSanitize());
 app.use(xss());
@@ -81,7 +86,7 @@ app.use(hpp());
 app.use(
   cors({
     methods: ["GET", "POST", "DELETE", "PUT"],
-    credentials: true, // enable set cookie
+    credentials: true,
     exposedHeaders: ["set-cookie"],
   })
 );
