@@ -33,6 +33,7 @@ exports.registerPage = (req, res, next) => {
     });
 };
 exports.registerPost = (req, res, next) => {
+    console.log(req.body)
     bcryptjs.hash(req.body.password, 10, async (error, hashedpassword) => {
         if (error) {
             return res.status(401).render('register', {
@@ -132,6 +133,7 @@ exports.Postlogin = (req, res, next) => {
                                 req.session.isAdmin = true;
                             else
                                 req.session.isAdmin = false;
+                            req.session.username = user.name;
                             return res.status(200).render('OTP-page', {
                                 pageTitle: 'OTP page',
                                 path: '/otp',

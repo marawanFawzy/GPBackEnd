@@ -1,11 +1,19 @@
+const User = require('../models/users')
 exports.home = (req, res, next) => {
-    res.render('home', {
-        pageTitle: 'home page',
-        name: 'marawan',
-        path: '/',
-        isAuthenticated: req.session.isLoggedIn,
-        isAdmin: req.session.isAdmin,
-    });
+    User.findOne({ username: req.session.username})
+        .then(user => {
+            console.log(user.name)
+            res.render('home', {
+                pageTitle: 'home page',
+                name: user.name,
+                path: '/',
+                isAuthenticated: req.session.isLoggedIn,
+                isAdmin: req.session.isAdmin,
+            });
+        }).catch(err => {
+            console.log(err);
+        })
+
 };
 exports.upload = (req, res, next) => {
     const image = req.file;
