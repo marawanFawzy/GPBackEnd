@@ -28,7 +28,7 @@ const fileStorage = multer.diskStorage({
     cb(null, 'images');
   },
   filename: (req, file, cb) => {
-    cb(null, file.fieldname + '-' + file.originalname);
+    cb(null, file.originalname);
   }
 });
 
@@ -56,13 +56,8 @@ app.use(bodyParser.json({ limit: '2mb' }));
 app.use(bodyParser.urlencoded({ limit: '2mb', extended: true }));
 app.use(bodyParser.json({ type: "application/*+json", inflate: false }));
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'images')))
 app.use(cookieParser());
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type , Auzhorization");
-  next();
-});
 
 app.use(session({
   secret: process.env.secret,
@@ -81,27 +76,20 @@ app.use(helmet());
 app.use(mongoSanitize());
 app.use(xss());
 app.use(hpp());
-app.use(
-  cors({
-    methods: ["GET", "POST", "DELETE", "PUT"],
-    credentials: true,
-    exposedHeaders: ["set-cookie"],
-  })
-);
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 const adminRoutes = require('./routes/admin');
 const commonRoutes = require('./routes/common');
 const userRoutes = require('./routes/user');
 const { MongoDBStore } = require("connect-mongodb-session");
-app.use(multer({ storage: fileStorage, fileFilter: Filter, limits: { fileSize: 80000 } }).single('image'), ErrorHandler);
+app.use(multer({ storage: fileStorage, fileFilter: Filter, limits: { fileSize: 100000 } }).single('image'), ErrorHandler);
 app.use(commonRoutes);
 app.use(adminRoutes);
 app.use(userRoutes);
 
 //not found handler 
 app.use((req, res, next) => {
-  res.status(404).render('404', { pageTitle: 'Page Not Found', path: '/404', isAuthenticated: req.session.isLoggedIn });
+  res.status(404).render('404', { pageTitle: 'Page Not Found', path: '/404', isAuthenticated: req.session.isLoggedIn , isAdmin: req.session.isAdmin });
 });
 
 mongoose.connect(

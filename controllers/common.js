@@ -82,6 +82,7 @@ exports.OTPPost = (req, res, next) => {
     const code = req.body.code;
     if (code == req.session.number) {
         delete req.session.number
+        req.session.cookie.expires = 1000 * 60 * 60 * 24
         req.session.isLoggedIn = true;
         if (!req.session.isAdmin) {
             res.render('home', {

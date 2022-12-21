@@ -8,4 +8,11 @@
                 <h1 class="name">
                    welcome admin <br><%= name %>
                 </h1>
+                <form class="form-frame" action="/download?:image_name" method="get">
+                    <div class="form-control">
+                        <label for="image_name">file name</label>
+                        <input type="text" name="image_name" id="image_name">
+                    </div>
+                    <button class="btn" type="submit">download image</button>
+                </form>
             </main>

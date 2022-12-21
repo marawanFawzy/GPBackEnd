@@ -1,6 +1,8 @@
 const User = require('../models/users')
+const path = require('path')
+const fs = require('fs')
 exports.home = (req, res, next) => {
-    User.findOne({ username: req.session.username})
+    User.findOne({ username: req.session.username })
         .then(user => {
             console.log(user.name)
             res.render('home', {
@@ -34,5 +36,18 @@ exports.upload = (req, res, next) => {
             isAuthenticated: req.session.isLoggedIn,
             isAdmin: req.session.isAdmin,
         });
+    }
+}
+exports.downloadFile = (req, res, next) => {
+    const filePath = path.join('images', req.query.image_name)
+    console.log(req.query.image_name)
+    if (fs.existsSync(filePath)) {
+        const file = fs.createReadStream(filePath)
+        res.setHeader('Content-Type', 'application/octet-stream')
+        res.setHeader('Content-Disposition', 'inline;filename="' + req.query.image_name + '"')
+        file.pipe(res)
+    }
+    else {
+        next()
     }
 }
