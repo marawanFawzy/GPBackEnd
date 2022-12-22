@@ -17,8 +17,6 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 
-
-var cors = require("cors");
 const hpp = require("hpp");
 
 var app = express();
@@ -83,9 +81,9 @@ const commonRoutes = require('./routes/common');
 const userRoutes = require('./routes/user');
 const { MongoDBStore } = require("connect-mongodb-session");
 app.use(multer({ storage: fileStorage, fileFilter: Filter, limits: { fileSize: 100000 } }).single('image'), ErrorHandler);
-app.use(commonRoutes);
-app.use(adminRoutes);
-app.use(userRoutes);
+app.use(commonRoutes); // login register otp log_out 
+app.use(adminRoutes); // admin download
+app.use(userRoutes); // home upload  
 
 //not found handler 
 app.use((req, res, next) => {

@@ -3,8 +3,10 @@ module.exports = (req, res, next) => {
         res.status(403).redirect('/login')
     }
     else {
-        if (!req.session.isAdmin)
-            res.status(403).redirect('/')
+        if (!req.session.isAdmin) {
+            res.status(401)
+            next()
+        }
         else
             next()
     }

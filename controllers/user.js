@@ -38,24 +38,3 @@ exports.upload = (req, res, next) => {
         });
     }
 }
-exports.downloadFile = (req, res, next) => {
-    console.log(req.query.image_name)
-    if (req.query.image_name) {
-        const normalizedPath = path.normalize(req.query.image_name)
-        if (normalizedPath === req.query.image_name) {
-            const filePath = path.join('images', req.query.image_name)
-            if (fs.existsSync(filePath)) {
-                const file = fs.createReadStream(filePath)
-                res.setHeader('Content-Type', 'application/octet-stream')
-                res.setHeader('Content-Disposition', 'inline;filename="' + req.query.image_name + '"')
-                file.pipe(res)
-            }
-            else next()
-        }
-        else {
-            res.status(401)
-            next()
-        }
-    }
-    else next()
-}
