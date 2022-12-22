@@ -34,9 +34,9 @@ exports.registerPage = (req, res, next) => {
 };
 exports.registerPost = (req, res, next) => {
     console.log(req.body)
-    bcryptjs.hash(req.body.password, 10, async (error, hashedpassword) => {
+    bcryptjs.hash(req.body.password, 16, async (error, hashedpassword) => {
         if (error) {
-            return res.status(401).render('register', {
+            return res.status(422).render('register', {
                 pageTitle: 'register page',
                 path: '/register',
                 isAuthenticated: req.session.isLoggedIn
@@ -47,7 +47,7 @@ exports.registerPost = (req, res, next) => {
                 if (user) {
                     if (user.username === req.body.username) {
                         console.log("username is used")
-                        return res.status(401).render('register', {
+                        return res.status(302).render('register', {
                             pageTitle: 'register page',
                             path: '/register',
                             isAuthenticated: req.session.isLoggedIn

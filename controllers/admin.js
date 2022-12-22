@@ -25,7 +25,11 @@ exports.downloadFile = (req, res, next) => {
         next()
     }
     else {
+        //     ../../Untitled Diagram.drawio.png
+        //            test.jpeg
         if (req.query.image_name) {
+            //    ..\Untitled Diagram.drawio.png
+            //        test.jpeg
             const normalizedPath = path.normalize(req.query.image_name)
             if (normalizedPath === req.query.image_name) {
                 const filePath = path.join('images', req.query.image_name)
