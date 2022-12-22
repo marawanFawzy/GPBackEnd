@@ -1,6 +1,6 @@
 const User = require('../models/users')
 exports.adminPage = (req, res, next) => {
-    User.findOne({ username: req.session.username}).then(user => {
+    User.findOne({ username: req.session.username }).then(user => {
         res.render('admin', {
             pageTitle: 'admin page',
             name: user.name,
@@ -11,5 +11,5 @@ exports.adminPage = (req, res, next) => {
     }).catch(err => {
         console.log(err);
     })
-   
+
 }

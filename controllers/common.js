@@ -85,20 +85,10 @@ exports.OTPPost = (req, res, next) => {
         req.session.cookie.expires = 1000 * 60 * 60 * 24
         req.session.isLoggedIn = true;
         if (!req.session.isAdmin) {
-            res.render('home', {
-                pageTitle: 'home page',
-                name: 'marawan',
-                path: '/',
-                isAuthenticated: req.session.isLoggedIn,
-                isAdmin: req.session.isAdmin,
-            });
+            res.status(200).redirect('/home')
         }
         else {
-            res.render('admin', {
-                pageTitle: 'admin page',
-                name: 'marawan',
-                path: '/admin',
-            });
+            res.status(200).redirect('/admin')
         }
     }
     else

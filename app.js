@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const mongoSanitize = require("express-mongo-sanitize");
-const MongoURI = 'mongodb+srv://'+process.env.mongoName+':'+process.env.mongoPass+'@security.qhsfmpj.mongodb.net/test'
+const MongoURI = 'mongodb+srv://' + process.env.mongoName + ':' + process.env.mongoPass + '@security.qhsfmpj.mongodb.net/test'
 const helmet = require("helmet");
 const xss = require("xss-clean");
 const multer = require('multer');
@@ -68,7 +68,7 @@ app.use(session({
   cookie: {
     expires: 10 * 60 * 1000,
   },
- 
+
 
 }))
 
@@ -89,7 +89,12 @@ app.use(userRoutes);
 
 //not found handler 
 app.use((req, res, next) => {
-  res.status(404).render('404', { pageTitle: 'Page Not Found', path: '/404', isAuthenticated: req.session.isLoggedIn , isAdmin: req.session.isAdmin });
+  if (res.statusCode === 401)
+  res.render('401', { pageTitle: 'Unauthorized', path: '/401', isAuthenticated: req.session.isLoggedIn, isAdmin: req.session.isAdmin });
+  else
+  res.status(404).render('404', { pageTitle: 'Page Not Found', path: '/404', isAuthenticated: req.session.isLoggedIn, isAdmin: req.session.isAdmin });
+
+
 });
 
 mongoose.connect(
