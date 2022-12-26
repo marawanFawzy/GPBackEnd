@@ -19,6 +19,8 @@ exports.home = (req, res, next) => {
 };
 exports.upload = (req, res, next) => {
     const image = req.file;
+    console.log(req.file)
+    console.log('test')
     if (!image) {
         return res.status(422).render('home', {
             pageTitle: 'home page',

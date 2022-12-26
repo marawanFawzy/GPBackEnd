@@ -66,8 +66,6 @@ app.use(session({
   cookie: {
     expires: 10 * 60 * 1000,
   },
-
-
 }))
 
 app.use(helmet());

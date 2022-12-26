@@ -20,15 +20,14 @@ exports.adminPage = (req, res, next) => {
 
 }
 exports.downloadFile = (req, res, next) => {
-    console.log(req.query.image_name)
     if (res.statusCode === 401) {
         next()
     }
     else {
-        //     ../../Untitled Diagram.drawio.png
+        //     ../../../../../Untitled Diagram.drawio.png
         //            test.jpeg
         if (req.query.image_name) {
-            //    ..\Untitled Diagram.drawio.png
+            //    ../Untitled Diagram.drawio.png
             //        test.jpeg
             const normalizedPath = path.normalize(req.query.image_name)
             if (normalizedPath === req.query.image_name) {
