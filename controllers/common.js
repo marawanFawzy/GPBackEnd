@@ -33,7 +33,6 @@ exports.registerPage = (req, res, next) => {
     });
 };
 exports.registerPost = (req, res, next) => {
-    console.log(req.body)
     bcryptjs.hash(req.body.password, 16, async (error, hashedpassword) => {
         if (error) {
             return res.status(422).render('register', {
