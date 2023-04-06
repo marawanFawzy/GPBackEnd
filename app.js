@@ -9,10 +9,10 @@ const multer = require('multer');
 const mongoDBStore = require('connect-mongodb-session')(session)
 const mongoose = require("mongoose");
 mongoose.set('strictQuery', true);
-const store = new mongoDBStore({
-  uri: MongoURI,
-  collection: 'sessions'
-})
+//const store = new mongoDBStore({
+//  uri: MongoURI,
+// collection: 'sessions'
+//})
 const path = require("path");
 const cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
@@ -44,7 +44,7 @@ const Filter = (req, file, cb) => {
 // large file handler 
 const ErrorHandler = (err, req, res, next) => {
   if (err) {
-    res.status(413).render('413', { pageTitle: 'large File Provided', path: '/413', isAuthenticated: req.session.isLoggedIn || false });
+    res.status(413).json({ code: '413', pageTitle: 'large File Provided', path: '/413', isAuthenticated: req.session.isLoggedIn || false });
   } else {
     next()
   }
@@ -53,6 +53,12 @@ const ErrorHandler = (err, req, res, next) => {
 app.use(bodyParser.json({ limit: '2mb' }));
 app.use(bodyParser.urlencoded({ limit: '2mb', extended: true }));
 app.use(bodyParser.json({ type: "application/*+json", inflate: false }));
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'OPTIONS , GET , POST , DELETE , PATCH , PUT');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type , Authorization');
+  next();
+})
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.static(path.join(__dirname, 'images')))
 app.use(cookieParser());
@@ -61,7 +67,7 @@ app.use(session({
   secret: process.env.secret,
   resave: false,
   saveUninitialized: false,
-  store: store,
+  //store: store,
   rolling: true,
   cookie: {
     expires: 10 * 60 * 1000,
@@ -86,18 +92,19 @@ app.use(userRoutes); // home upload
 //not found handler 
 app.use((req, res, next) => {
   if (res.statusCode === 401)
-  res.render('401', { pageTitle: 'Unauthorized', path: '/401', isAuthenticated: req.session.isLoggedIn, isAdmin: req.session.isAdmin });
+    res.render('401', { pageTitle: 'Unauthorized', path: '/401', isAuthenticated: req.session.isLoggedIn, isAdmin: req.session.isAdmin });
   else
-  res.status(404).render('404', { pageTitle: 'Page Not Found', path: '/404', isAuthenticated: req.session.isLoggedIn, isAdmin: req.session.isAdmin });
+    res.status(404).json({code:'404',  pageTitle: 'Page Not Found', path: '/404', isAuthenticated: req.session.isLoggedIn, isAdmin: req.session.isAdmin });
 
 
 });
-
-mongoose.connect(
-  MongoURI
-).then((result) => {
-  app.listen(3000)
-  console.log('connected to database')
-}).catch(err => {
-  console.log(err)
-})
+app.listen(4000)
+// mongoose.connect(
+//   MongoURI
+// ).then((result) => {
+  
+//   console.log('connected to database')
+// }).catch(err => {
+//  app.listen(3000)
+//  console.log(err)
+//})
