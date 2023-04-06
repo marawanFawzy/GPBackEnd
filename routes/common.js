@@ -20,7 +20,7 @@ const OTPLimiter = rateLimit({
 })
 
 router.get('/login', commonController.LoginPage)
-router.post('/login', commonController.Postlogin) // A02
+router.post('/login', loginlimiter, commonController.Postlogin) // A02
 router.get('/otp', commonController.OTPPage)
 router.post('/otp', OTPLimiter, commonController.OTPPost)
 router.get('/register', commonController.registerPage)
