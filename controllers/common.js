@@ -95,56 +95,15 @@ exports.OTPPost = (req, res, next) => {
 };
 exports.Postlogin = (req, res, next) => {
     const password = req.body.password
-    const username = req.body.username
-    if (password == 'mmm'){
-        console.log("here")
-        res.status(200).json({ success: true, username: username })
+    const email = req.body.email
+    if (password == 'mmm'){ // correct password
+        console.log(email)
+        res.status(200).json({ success: true, email: email })
     }
     else {
         res.status(401).json({ success: false})
 
     }
-    // User.findOne({ username: req.body.username })
-    //     .then(user => {
-    //         if (user)
-    //             bcryptjs.compare(password, user.password)
-    //                 .then((correct) => {
-    //                     if (correct) {
-    //                         req.session.number = Math.floor(Math.random() * 999999 - 1000000 + 1) + 1000000
-    //                         const d = new Date();
-    //                         let options = {
-    //                             from: process.env.MAIL,
-    //                             to: user.mail,
-    //                             subject: 'Your OTP',
-    //                             text: 'your OTP is ' + req.session.number + ' this OTP Expires after 10 minutes at ' + new Date(d.getTime() + 600000)
-    //                         }
-    //                         transport.sendMail(options, (err, data) => {
-    //                             if (err)
-    //                                 console.log(err)
-    //                             else
-    //                                 console.log('done')
-    //                         })
-    //                         if (user.flag)
-    //                             req.session.isAdmin = true;
-    //                         else
-    //                             req.session.isAdmin = false;
-    //                         req.session.username = user.name;
-    //                         return res.status(200).json({ code: '200', pageTitle: 'logged', isAuthenticated: req.session.isLoggedIn, isAdmin: req.session.isAdmin });
-    //                     } else {
-    //                         return res.status(401).json({code:'401',  pageTitle: 'wrong data', isAuthenticated: req.session.isLoggedIn, isAdmin: req.session.isAdmin });
-    //                     }
-    //                 });
-    //         else {
-    //             return res.status(401).render('login', {
-    //                 pageTitle: 'login page',
-    //                 path: '/login',
-    //                 isAuthenticated: req.session.isLoggedIn
-    //             });
-    //         }
-    //     }
-    //     ).catch(err => {
-    //         console.log(err);
-    //     })
 };
 exports.logOut = (req, res, next) => {
     req.session.destroy(() => {
