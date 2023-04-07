@@ -12,69 +12,7 @@ let transport = nodemailer.createTransport({
 })
 
 
-exports.LoginPage = (req, res, next) => {
-    res.status(200).json({ code: '403', pageTitle: 'this is login page', isAuthenticated: req.session.isLoggedIn, isAdmin: req.session.isAdmin });
-};
-exports.OTPPage = (req, res, next) => {
-    res.render('OTP-page', {
-        pageTitle: 'OTP page',
-        path: '/otp',
-        isAuthenticated: req.session.isLoggedIn
-    });
-};
-exports.registerPage = (req, res, next) => {
-    res.render('register', {
-        pageTitle: 'register page',
-        path: '/register',
-        isAuthenticated: req.session.isLoggedIn
-    });
-};
-exports.registerPost = (req, res, next) => {
-    bcryptjs.hash(req.body.password, 16, async (error, hashedpassword) => {
-        if (error) {
-            return res.status(422).render('register', {
-                pageTitle: 'register page',
-                path: '/register',
-                isAuthenticated: req.session.isLoggedIn
-            });
-        }
-        User.findOne({ username: req.body.username }) //
-            .then(user => {
-                if (user) {
-                    if (user.username === req.body.username) {
-                        console.log("username is used")
-                        return res.status(302).render('register', {
-                            pageTitle: 'register page',
-                            path: '/register',
-                            isAuthenticated: req.session.isLoggedIn
-                        });
-                    }
-                }
-                else {
-                    const newUser = new User({
-                        name: req.body.name,
-                        username: req.body.username,
-                        mail: req.body.mail,
-                        password: hashedpassword,
-                    })
-                    newUser.save()
-                        .then(result => {
-                            return res.status(200).render('login', {
-                                pageTitle: 'login page',
-                                path: '/login',
-                                isAuthenticated: req.session.isLoggedIn
-                            });
-                        }).catch(err => {
-                            console.log(err)
-                        });
-                }
-            }).catch(err => {
-                console.log(err);
-            });
-    });
-
-};
-exports.OTPPost = (req, res, next) => {
+exports.OTP = (req, res, next) => {
     const code = req.body.code;
     if (code == req.session.number) {
         delete req.session.number
@@ -94,7 +32,7 @@ exports.OTPPost = (req, res, next) => {
             isAuthenticated: req.session.isLoggedIn
         });
 };
-exports.Postlogin = (req, res, next) => {
+exports.login = (req, res, next) => {
     const password = req.body.password
     const email = req.body.email
     if (email && password == 'mmm') { // correct password
