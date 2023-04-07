@@ -2,6 +2,7 @@ require("dotenv").config();
 const bcryptjs = require("bcryptjs");
 const User = require('../models/users')
 const nodemailer = require('nodemailer')
+const jwt = require('jsonwebtoken')
 let transport = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -96,12 +97,19 @@ exports.OTPPost = (req, res, next) => {
 exports.Postlogin = (req, res, next) => {
     const password = req.body.password
     const email = req.body.email
-    if (password == 'mmm'){ // correct password
+    if (email && password == 'mmm') { // correct password
+        token = jwt.sign(
+            {
+                email: email,
+                id: 1
+            }, 'key',
+            { expiresIn: '1h' }
+        )
         console.log(email)
-        res.status(200).json({ success: true, email: email })
+        res.status(200).json({ token: token, success: true, email: email })
     }
     else {
-        res.status(401).json({ success: false})
+        res.status(401).json({ success: false })
 
     }
 };
