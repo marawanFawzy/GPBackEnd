@@ -10,31 +10,12 @@ let transport = nodemailer.createTransport({
     }
 })
 
-exports.OTP = (req, res, next) => {
-    const code = req.body.code;
-    if (code == req.session.number) {
-        delete req.session.number
-        req.session.cookie.expires = 1000 * 60 * 60 * 24
-        req.session.isLoggedIn = true;
-        if (!req.session.isAdmin) {
-            res.status(200).redirect('/')
-        }
-        else {
-            res.status(200).redirect('/admin')
-        }
-    }
-    else
-        return res.status(401).render('OTP-page', {
-            pageTitle: 'OTP page',
-            path: '/otp',
-            isAuthenticated: req.session.isLoggedIn
-        });
-};
 exports.login = (req, res, next) => {
+    console.log("login")
     const password = req.body.password
     const email = req.body.email
     if (email && password == 'mmm') { // correct password
-        token = jwt.sign(
+        Atoken = jwt.sign(
             {
                 email: email,
                 id: 1
@@ -42,7 +23,7 @@ exports.login = (req, res, next) => {
             { expiresIn: '1h' }
         )
         console.log(email)
-        res.status(200).json({ code: 200, token: token, success: true, email: email })
+        res.status(200).json({ code: 200, Atoken: Atoken, success: true, email: email })
     }
     else {
         console.log("wrong")
@@ -50,6 +31,90 @@ exports.login = (req, res, next) => {
 
     }
 };
-exports.logOut = (req, res, next) => {
-    req.session.destroy();
-};
+exports.ResetPassword = (req, res, next) => {
+    console.log(req.body.email)
+    number = Math.floor(Math.random() * 999999 - 1000000 + 1) + 1000000
+    let options = {
+        from: process.env.MAIL,
+        to: req.body.email,
+        subject: 'password reset',
+        text: 'the code to reset your password is ' + number
+    }
+    transport.sendMail(options, (err, data) => {
+        if (err)
+            res.status(500).json({
+                success: false,
+                code: 500,
+            })
+        else {
+            Rtoken = jwt.sign(
+                {
+                    email: req.body.email,
+                    id: 1
+                }, 'someStrongKey',
+                { expiresIn: '1h' }
+            )
+            res.status(200).json({
+                success: true,
+                code: 200,
+                Rtoken: Rtoken
+
+            })
+        }
+
+    })
+}
+exports.ConfirmCode = (req, res, next) => {
+    console.log(req.body.number)
+    try {
+        Rtoken = req.get('Authorization').split(' ')[1]
+        console.log(Rtoken)
+        number = req.body.number
+        const decodeToken = jwt.verify(Rtoken, 'someStrongKey');
+        email = decodeToken.email
+        //find in database 
+
+        if (number === number) {// from database 
+            res.status(200).json({
+                success: true,
+                code: 200,
+            })
+        }
+        else {
+            res.status(403).json({
+                success: false,
+                code: 403,
+
+            })
+        }
+    }
+    catch (err) {
+        res.status(401).json({
+            success: false,
+            code: 401,
+        })
+    }
+
+}
+exports.changePassword = (req, res, next) => {
+    console.log(req.body.number)
+    try {
+        Rtoken = req.get('Authorization').split(' ')[1]
+        newPassword = req.body.newPassword
+        const decodeToken = jwt.verify(Rtoken, 'someStrongKey');
+        email = decodeToken.email
+        //find in database 
+        //add to database 
+        res.status(200).json({
+            success: true,
+            code: 200,
+        })
+    }
+    catch (err) {
+        res.status(401).json({
+            success: false,
+            code: 401,
+        })
+    }
+
+}
