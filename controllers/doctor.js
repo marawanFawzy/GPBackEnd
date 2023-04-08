@@ -6,13 +6,19 @@ exports.home = (req, res, next) => {
         console.log("no access")
         res.status(req.code).json({
             success: false,
-            email: req.email
+            
         })
     }
     else {
         console.log("this is home")
         res.status(req.code).json({
+            email: req.email,
+            // find and return level 
             success: true,
+            researcher : false,
+            doctor : true,
+            observer : false,
+            admin : true,
         })
     }
 };
