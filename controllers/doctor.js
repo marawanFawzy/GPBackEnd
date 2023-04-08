@@ -1,21 +1,20 @@
-const User = require('../models/users')
+const User = require('../models/doctors')
 const path = require('path')
 const fs = require('fs')
 exports.home = (req, res, next) => {
-    User.findOne({ username: req.session.username })
-        .then(user => {
-            console.log(user.name)
-            res.render('home', {
-                pageTitle: 'home page',
-                name: user.name,
-                path: '/',
-                isAuthenticated: req.session.isLoggedIn,
-                isAdmin: req.session.isAdmin,
-            });
-        }).catch(err => {
-            console.log(err);
+    if (req.code === 401) {
+        console.log("no access")
+        res.status(req.code).json({
+            success: false,
+            email: req.email
         })
-
+    }
+    else {
+        console.log("this is home")
+        res.status(req.code).json({
+            success: true,
+        })
+    }
 };
 exports.upload = (req, res, next) => {
     const image = req.file;

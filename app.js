@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require('cors')
 const session = require("express-session");
 const mongoSanitize = require("express-mongo-sanitize");
 const MongoURI = 'mongodb+srv://' + process.env.mongoName + ':' + process.env.mongoPass + '@security.qhsfmpj.mongodb.net/test'
@@ -20,7 +21,7 @@ var bodyParser = require("body-parser");
 const hpp = require("hpp");
 
 var app = express();
-
+//app.use(cors)
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'images');
@@ -82,7 +83,7 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 const adminRoutes = require('./routes/admin');
 const commonRoutes = require('./routes/common');
-const userRoutes = require('./routes/user');
+const userRoutes = require('./routes/doctor');
 const { MongoDBStore } = require("connect-mongodb-session");
 app.use(multer({ storage: fileStorage, fileFilter: Filter, limits: { fileSize: 100000 } }).single('image'), ErrorHandler);
 app.use(commonRoutes); // login register otp log_out 

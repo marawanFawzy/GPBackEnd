@@ -1,24 +1,6 @@
-const User = require('../models/users')
+const doctor = require('../models/doctors')
 const path = require('path')
 const fs = require('fs')
-exports.adminPage = (req, res, next) => {
-    if (res.statusCode === 401)
-        next()
-    else {
-        User.findOne({ username: req.session.username }).then(user => {
-            res.render('admin', {
-                pageTitle: 'admin page',
-                name: user.name,
-                path: '/admin',
-                isAuthenticated: req.session.isLoggedIn,
-                isAdmin: req.session.isAdmin,
-            });
-        }).catch(err => {
-            console.log(err);
-        })
-    }
-
-}
 exports.downloadFile = (req, res, next) => {
     if (res.statusCode === 401) {
         next()

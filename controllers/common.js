@@ -1,8 +1,7 @@
 require("dotenv").config();
 const bcryptjs = require("bcryptjs");
-const User = require('../models/users')
 const nodemailer = require('nodemailer')
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 let transport = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -10,7 +9,6 @@ let transport = nodemailer.createTransport({
         pass: process.env.PASS,
     }
 })
-
 
 exports.OTP = (req, res, next) => {
     const code = req.body.code;
@@ -40,23 +38,18 @@ exports.login = (req, res, next) => {
             {
                 email: email,
                 id: 1
-            }, 'key',
+            }, 'someStrongKey',
             { expiresIn: '1h' }
         )
         console.log(email)
         res.status(200).json({ token: token, success: true, email: email })
     }
     else {
+        console.log("wrong")
         res.status(401).json({ success: false })
 
     }
 };
 exports.logOut = (req, res, next) => {
-    req.session.destroy(() => {
-        res.render('login', {
-            pageTitle: 'login page',
-            path: '/login',
-            isAuthenticated: false
-        });
-    });
+    req.session.destroy();
 };
