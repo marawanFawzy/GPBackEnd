@@ -42,11 +42,11 @@ exports.login = (req, res, next) => {
             { expiresIn: '1h' }
         )
         console.log(email)
-        res.status(200).json({ token: token, success: true, email: email })
+        res.status(200).json({ code: 200, token: token, success: true, email: email })
     }
     else {
         console.log("wrong")
-        res.status(401).json({ success: false })
+        res.status(401).json({ code: 403, success: false })
 
     }
 };

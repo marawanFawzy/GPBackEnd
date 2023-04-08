@@ -5,20 +5,22 @@ exports.home = (req, res, next) => {
     if (req.code === 401) {
         console.log("no access")
         res.status(req.code).json({
+            code: req.code,
             success: false,
-            
+
         })
     }
     else {
         console.log("this is home")
         res.status(req.code).json({
             email: req.email,
+            code: req.code,
             // find and return level 
             success: true,
-            researcher : false,
-            doctor : true,
-            observer : false,
-            admin : true,
+            researcher: false,
+            doctor: true,
+            observer: false,
+            admin: true,
         })
     }
 };
