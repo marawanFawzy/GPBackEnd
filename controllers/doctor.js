@@ -17,9 +17,9 @@ exports.home = (req, res, next) => {
             code: req.code,
             // find and return level 
             success: true,
-            researcher: false,
+            researcher: true,
             doctor: true,
-            observer: false,
+            observer: true,
             admin: true,
         })
     }

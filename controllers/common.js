@@ -18,7 +18,8 @@ exports.login = (req, res, next) => {
         Atoken = jwt.sign(
             {
                 email: email,
-                id: 1
+                id: 1,
+                refreshOnly: false,
             }, 'someStrongKey',
             { expiresIn: '1h' }
         )
@@ -50,7 +51,8 @@ exports.ResetPassword = (req, res, next) => {
             Rtoken = jwt.sign(
                 {
                     email: req.body.email,
-                    id: 1
+                    id: 1,
+                    refreshOnly: true,
                 }, 'someStrongKey',
                 { expiresIn: '1h' }
             )
@@ -72,21 +74,33 @@ exports.ConfirmCode = (req, res, next) => {
         number = req.body.number
         const decodeToken = jwt.verify(Rtoken, 'someStrongKey');
         email = decodeToken.email
+        if(Rtoken.refreshOnly)
+        {
+            if (number === number) {// from database 
+                res.status(200).json({
+                    success: true,
+                    code: 200,
+                    email: email,
+                })
+            }
+            else {
+                res.status(403).json({
+                    success: false,
+                    code: 403,
+    
+                })
+            }
+        }
+        else{
+            res.status(401).json({
+                success: false,
+                code: 401,
+
+            })  
+        }
         //find in database 
 
-        if (number === number) {// from database 
-            res.status(200).json({
-                success: true,
-                code: 200,
-            })
-        }
-        else {
-            res.status(403).json({
-                success: false,
-                code: 403,
-
-            })
-        }
+       
     }
     catch (err) {
         res.status(401).json({
