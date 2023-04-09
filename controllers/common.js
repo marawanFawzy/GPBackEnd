@@ -35,6 +35,8 @@ exports.login = (req, res, next) => {
 exports.ResetPassword = (req, res, next) => {
     console.log(req.body.email)
     number = Math.floor(Math.random() * 999999 - 1000000 + 1) + 1000000
+    req.session.number = number;
+    console.log(req.session)
     let options = {
         from: process.env.MAIL,
         to: req.body.email,
@@ -60,21 +62,20 @@ exports.ResetPassword = (req, res, next) => {
                 success: true,
                 code: 200,
                 Rtoken: Rtoken
-
             })
         }
-
     })
 }
 exports.ConfirmCode = (req, res, next) => {
     console.log(req.body.number)
+    console.log(req.session)
     try {
         Rtoken = req.get('Authorization').split(' ')[1]
-        console.log(Rtoken)
         number = req.body.number
         const decodeToken = jwt.verify(Rtoken, 'someStrongKey');
         email = decodeToken.email
-        if (Rtoken.refreshOnly) {
+        console.log(decodeToken.refreshOnly)
+        if (decodeToken.refreshOnly) {
             if (number === number) {// from database 
                 res.status(200).json({
                     success: true,

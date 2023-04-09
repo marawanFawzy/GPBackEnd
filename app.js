@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require('cors')
+const session = require('express-session');
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
 const xss = require("xss-clean");
@@ -12,6 +13,7 @@ var bodyParser = require("body-parser");
 const hpp = require("hpp");
 
 var app = express();
+
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'images');
@@ -43,6 +45,19 @@ const ErrorHandler = (err, req, res, next) => {
 app.use(bodyParser.json({ limit: '2mb' }));
 app.use(bodyParser.urlencoded({ limit: '2mb', extended: true }));
 app.use(bodyParser.json({ type: "application/*+json", inflate: false }));
+app.use(
+  session({
+    secret: "This is a secret",
+    name: "my test",
+    cookie: {
+      secure: false,
+      maxAge: 30000 * 60 * 60 * 24 * 7, // 1 week
+    },
+    //store: store,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'OPTIONS , GET , POST , DELETE , PATCH , PUT');
@@ -65,6 +80,14 @@ const adminRoutes = require('./routes/admin');
 const commonRoutes = require('./routes/common');
 const userRoutes = require('./routes/doctor');
 app.use(multer({ storage: fileStorage, fileFilter: Filter, limits: { fileSize: 100000 } }).single('image'), ErrorHandler);
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "DELETE", "PUT"],
+    credentials: true, // enable set cookie
+    exposedHeaders: ["set-cookie"],
+  })
+);
 app.use(commonRoutes); // login register otp log_out 
 app.use(adminRoutes); // admin download
 app.use(userRoutes); // home upload  
