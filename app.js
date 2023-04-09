@@ -12,7 +12,6 @@ var bodyParser = require("body-parser");
 const hpp = require("hpp");
 
 var app = express();
-//app.use(cors)
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'images');

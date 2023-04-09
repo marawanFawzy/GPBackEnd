@@ -74,8 +74,7 @@ exports.ConfirmCode = (req, res, next) => {
         number = req.body.number
         const decodeToken = jwt.verify(Rtoken, 'someStrongKey');
         email = decodeToken.email
-        if(Rtoken.refreshOnly)
-        {
+        if (Rtoken.refreshOnly) {
             if (number === number) {// from database 
                 res.status(200).json({
                     success: true,
@@ -87,20 +86,20 @@ exports.ConfirmCode = (req, res, next) => {
                 res.status(403).json({
                     success: false,
                     code: 403,
-    
+
                 })
             }
         }
-        else{
+        else {
             res.status(401).json({
                 success: false,
                 code: 401,
 
-            })  
+            })
         }
         //find in database 
 
-       
+
     }
     catch (err) {
         res.status(401).json({

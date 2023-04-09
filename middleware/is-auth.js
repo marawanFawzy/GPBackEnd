@@ -3,8 +3,7 @@ exports.requestpage = (req, res, next) => {
     try {
         Atoken = req.get('Authorization').split(' ')[1]
         const decodeToken = jwt.verify(Atoken, 'someStrongKey');
-        if(decodeToken.refreshOnly)
-        {
+        if (decodeToken.refreshOnly) {
             throw new Error("Unauthorized")
         }
         req.code = 200

@@ -22,7 +22,7 @@ const OTPLimiter = rateLimit({
 
 router.post('/login', loginlimiter, commonController.login) // A02
 router.post('/ResetPassword', commonController.ResetPassword)
-router.post('/ConfirmCode',OTPLimiter, commonController.ConfirmCode)
+router.post('/ConfirmCode', OTPLimiter, commonController.ConfirmCode)
 router.post('/changePassword', commonController.changePassword)
 //router.post('/logOut', commonController.changePassword)
 
