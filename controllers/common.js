@@ -12,8 +12,6 @@ let transport = nodemailer.createTransport({
 
 exports.login = (req, res, next) => {
     console.log("login")
-    const number = Math.random() * 90000 - 10000 + 1 + 10000;
-    req.session.number = number;
     const password = req.body.password
     const email = req.body.email
     if (email && password == 'mmm') { // correct password
@@ -37,7 +35,7 @@ exports.login = (req, res, next) => {
 
 exports.ResetPassword = (req, res, next) => {
     console.log(req.body.email)
-    number = Math.floor(Math.random() * 999999 - 1000000 + 1) + 1000000
+    number = Math.round(Math.floor(Math.random() * 999999 - 1000000 + 1) + 1000000) 
     req.session.number = number;
     console.log(req.session)
     let options = {
@@ -75,11 +73,12 @@ exports.ConfirmCode = (req, res, next) => {
     try {
         Rtoken = req.get('Authorization').split(' ')[1]
         number = req.body.number
+        confirmNumber = req.session.number
         const decodeToken = jwt.verify(Rtoken, 'someStrongKey');
         email = decodeToken.email
         console.log(decodeToken.refreshOnly)
         if (decodeToken.refreshOnly) {
-            if (number === number) {// from database 
+            if (number == confirmNumber) {// from database 
                 res.status(200).json({
                     success: true,
                     code: 200,

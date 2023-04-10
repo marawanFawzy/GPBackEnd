@@ -20,7 +20,7 @@ const OTPLimiter = rateLimit({
     message: 'You have exceeded the 3 requests in OTP please wait 10 minutes',
 })
 
-router.post('/login', commonController.login) // A02
+router.post('/login',loginlimiter, commonController.login) // A02
 router.post('/ResetPassword', commonController.ResetPassword)
 router.post('/ConfirmCode', OTPLimiter, commonController.ConfirmCode)
 router.post('/changePassword', commonController.changePassword)
