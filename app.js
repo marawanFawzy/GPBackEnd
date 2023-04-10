@@ -23,28 +23,39 @@ const fileStorage = multer.diskStorage({
   }
 });
 
-const Filter = (req, file, cb) => {
-  if (
-    file.mimetype === 'image/png' ||
-    file.mimetype === 'image/jpg' ||
-    file.mimetype === 'image/jpeg'
-  ) {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-};
-// large file handler 
-const ErrorHandler = (err, req, res, next) => {
-  if (err) {
-    res.status(413).json({ code: '413', pageTitle: 'large File Provided', path: '/413', isAuthenticated: req.session.isLoggedIn || false });
-  } else {
-    next()
-  }
-}
-app.use(bodyParser.json({ limit: '2mb' }));
-app.use(bodyParser.urlencoded({ limit: '2mb', extended: true }));
+app.use(bodyParser.json({ limit: "2mb" }));
+app.use(bodyParser.urlencoded({ limit: "2mb", extended: true }));
 app.use(bodyParser.json({ type: "application/*+json", inflate: false }));
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Methods', 'OPTIONS , GET , POST , DELETE , PATCH , PUT');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type , Authorization');
+  next();
+})
+app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "images")));
+app.use(cookieParser());
+
+app.use(helmet());
+app.use(mongoSanitize());
+app.use(xss());
+app.use(hpp());
+app.set("view engine", "ejs");
+app.set("views", "views");
+const adminRoutes = require("./routes/admin");
+const commonRoutes = require("./routes/common");
+const userRoutes = require("./routes/doctor");
+// app.use(multer({ storage: fileStorage, fileFilter: Filter, limits: { fileSize: 100000 } }).single('image'), ErrorHandler);
+
+app.use(
+  cors({
+    origin: "http://localhost:5174",
+    methods: ["GET", "POST", "DELETE", "PUT"],
+    credentials: true, // enable set cookie
+    exposedHeaders: ["set-cookie"],
+  })
+);
+
 app.use(
   session({
     secret: "This is a secret",
@@ -56,36 +67,6 @@ app.use(
     //store: store,
     resave: false,
     saveUninitialized: false,
-  })
-);
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'OPTIONS , GET , POST , DELETE , PATCH , PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type , Authorization');
-  next();
-})
-app.use(express.static(path.join(__dirname, 'public')))
-app.use(express.static(path.join(__dirname, 'images')))
-app.use(cookieParser());
-
-
-
-app.use(helmet());
-app.use(mongoSanitize());
-app.use(xss());
-app.use(hpp());
-app.set('view engine', 'ejs');
-app.set('views', 'views');
-const adminRoutes = require('./routes/admin');
-const commonRoutes = require('./routes/common');
-const userRoutes = require('./routes/doctor');
-app.use(multer({ storage: fileStorage, fileFilter: Filter, limits: { fileSize: 100000 } }).single('image'), ErrorHandler);
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "DELETE", "PUT"],
-    credentials: true, // enable set cookie
-    exposedHeaders: ["set-cookie"],
   })
 );
 app.use(commonRoutes); // login register otp log_out 

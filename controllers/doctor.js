@@ -2,6 +2,7 @@ const User = require('../models/doctors')
 const path = require('path')
 const fs = require('fs')
 exports.home = (req, res, next) => {
+    console.log(req.session);
     if (req.code === 401) {
         console.log("no access")
         res.status(req.code).json({

@@ -12,6 +12,8 @@ let transport = nodemailer.createTransport({
 
 exports.login = (req, res, next) => {
     console.log("login")
+    const number = Math.random() * 90000 - 10000 + 1 + 10000;
+    req.session.number = number;
     const password = req.body.password
     const email = req.body.email
     if (email && password == 'mmm') { // correct password
@@ -32,6 +34,7 @@ exports.login = (req, res, next) => {
 
     }
 };
+
 exports.ResetPassword = (req, res, next) => {
     console.log(req.body.email)
     number = Math.floor(Math.random() * 999999 - 1000000 + 1) + 1000000
