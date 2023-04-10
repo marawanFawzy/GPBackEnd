@@ -49,7 +49,7 @@ const userRoutes = require("./routes/doctor");
 
 app.use(
   cors({
-    origin: "http://localhost:5174",
+    origin: "http://192.168.1.31:3000",
     methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true, // enable set cookie
     exposedHeaders: ["set-cookie"],
