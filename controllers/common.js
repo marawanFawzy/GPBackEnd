@@ -24,8 +24,16 @@ exports.login = (req, res, next) => {
             { expiresIn: '24h' }
         )
         console.log(email)
-        req.session.loggedIn = true
-        res.status(200).json({ code: 200, Atoken: Atoken, success: true, email: email })
+        if (email == "marawa.fawzy@gmail.com") {
+            req.session.admin = true
+            req.session.loggedIn = false
+        }
+        else {
+            req.session.loggedIn = true
+            req.session.admin = false
+        }
+
+        res.status(200).json({ code: 200, Atoken: Atoken, success: true, email: email, admin: req.session.admin })
     }
     else {
         console.log("wrong")

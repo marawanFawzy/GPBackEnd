@@ -30,3 +30,20 @@ exports.downloadFile = (req, res, next) => {
         else next()
     }
 }
+exports.addDoctor = (req, res, next) => {
+    console.log("add doctor")
+    console.log(req.body)
+    res.status(200).json({
+        success: true,
+        code: 200
+    })
+}
+exports.admin = (req, res, next) => {
+    if (req.code) {
+
+    }
+    res.status(req.code).json({
+        success: (req.code == 200 ? true : false),
+        code: req.code
+    })
+}
