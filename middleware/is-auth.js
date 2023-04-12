@@ -6,8 +6,14 @@ exports.requestpage = (req, res, next) => {
         if (decodeToken.refreshOnly) {
             throw new Error("Unauthorized")
         }
-        req.code = 200
-        req.email = decodeToken.email
+        if (req.session.loggedIn) {
+            req.code = 200
+            req.email = decodeToken.email
+
+        }
+        else {
+            throw new Error("Unauthorized")
+        }
     }
     catch (err) {
         req.code = 401
