@@ -6,6 +6,7 @@
 [] 6- fetch single alert endpoint
 [] 7- search how to create pdf with a spcific format 
 [] 8- fixes to download file of reports 
-[] 9- how to invalidate jwt server side even if not expired 
-[] 10- databse creation and the avail. of adding sessions in rest api mode 
-[] 11- vercel deploy
+[x] 9- how to invalidate jwt server side even if not expired 
+[x] 10- add session and cookies 
+[] 11- databse creation and the avail. of adding sessions in rest api mode 
+[] 12- vercel deploy

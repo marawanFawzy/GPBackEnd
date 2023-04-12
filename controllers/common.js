@@ -21,13 +21,15 @@ exports.login = (req, res, next) => {
                 id: 1,
                 refreshOnly: false,
             }, 'someStrongKey',
-            { expiresIn: '1h' }
+            { expiresIn: '24h' }
         )
         console.log(email)
+        req.session.loggedIn = true
         res.status(200).json({ code: 200, Atoken: Atoken, success: true, email: email })
     }
     else {
         console.log("wrong")
+        req.session.loggedIn = false
         res.status(401).json({ code: 403, success: false })
 
     }
@@ -35,16 +37,13 @@ exports.login = (req, res, next) => {
 
 exports.ResetPassword = (req, res, next) => {
     console.log(req.body.email)
-    number = Math.round(Math.floor(Math.random() * 999999 - 1000000 + 1) + 1000000) 
-    req.session.number = number;
-    console.log(req.session)
-    let options = {
+    number = Math.round(Math.floor(Math.random() * 999999 - 1000000 + 1) + 1000000)
+    transport.sendMail({
         from: process.env.MAIL,
         to: req.body.email,
         subject: 'password reset',
         text: 'the code to reset your password is ' + number
-    }
-    transport.sendMail(options, (err, data) => {
+    }, (err, data) => {
         if (err)
             res.status(500).json({
                 success: false,
@@ -59,6 +58,9 @@ exports.ResetPassword = (req, res, next) => {
                 }, 'someStrongKey',
                 { expiresIn: '1h' }
             )
+            req.session.number = number;
+            req.session.changePassword = true;
+            console.log(req.session)
             res.status(200).json({
                 success: true,
                 code: 200,
@@ -77,7 +79,7 @@ exports.ConfirmCode = (req, res, next) => {
         const decodeToken = jwt.verify(Rtoken, 'someStrongKey');
         email = decodeToken.email
         console.log(decodeToken.refreshOnly)
-        if (decodeToken.refreshOnly) {
+        if (decodeToken.refreshOnly && req.session.changePassword) {
             if (number == confirmNumber) {// from database 
                 res.status(200).json({
                     success: true,
@@ -113,7 +115,6 @@ exports.ConfirmCode = (req, res, next) => {
 
 }
 exports.changePassword = (req, res, next) => {
-    console.log(req.body.number)
     try {
         Rtoken = req.get('Authorization').split(' ')[1]
         newPassword = req.body.newPassword
@@ -121,10 +122,18 @@ exports.changePassword = (req, res, next) => {
         email = decodeToken.email
         //find in database 
         //add to database 
-        res.status(200).json({
-            success: true,
-            code: 200,
-        })
+        if (req.session.changePassword) {
+            req.session.destroy(() => {
+                console.log("destroy")
+            })
+            res.status(200).json({
+                success: true,
+                code: 200,
+            })
+        }
+        else throw new Error()
+
+
     }
     catch (err) {
         res.status(401).json({
