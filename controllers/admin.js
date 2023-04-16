@@ -30,20 +30,67 @@ exports.downloadFile = (req, res, next) => {
         else next()
     }
 }
+
+exports.search = (req, res, next) => {
+    console.log("search for doctor")
+    console.log(req.body)
+    if (req.code === 200) {
+        res.status(req.code).json({
+            success: true,
+            code: req.code
+        })
+    }
+    else {
+        res.status(req.code).json({
+            success: false,
+            code: req.code
+        })
+    }
+}
+exports.adminPages = (req, res, next) => {
+    if (req.code === 200) {
+        res.status(req.code).json({
+            success: true,
+            code: req.code
+        })
+    }
+    else {
+        res.status(req.code).json({
+            success: false,
+            code: req.code
+        })
+    }
+}
 exports.addDoctor = (req, res, next) => {
     console.log("add doctor")
     console.log(req.body)
-    res.status(200).json({
-        success: true,
-        code: 200
-    })
-}
-exports.admin = (req, res, next) => {
-    if (req.code) {
-
+    if (req.code === 200) {
+        res.status(req.code).json({
+            success: true,
+            code: req.code
+        })
     }
-    res.status(req.code).json({
-        success: (req.code == 200 ? true : false),
-        code: req.code
-    })
+    else {
+        res.status(req.code).json({
+            success: false,
+            code: req.code
+        })
+    }
+}
+exports.editdoc = (req, res, next) => {
+    console.log("doctor data changed")
+    console.log(req.body)
+    if (req.code === 200) {
+        res.status(req.code).json({
+            success: true,
+            code: req.code
+        })
+    }
+    else {
+        res.status(req.code).json({
+            success: false,
+            code: req.code
+        })
+    }
+
 }

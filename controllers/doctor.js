@@ -1,7 +1,7 @@
 const User = require('../models/doctors')
 const path = require('path')
 const fs = require('fs')
-exports.home = (req, res, next) => {
+exports.userPages = (req, res, next) => {
     console.log(req.session);
     if (req.code === 401) {
         console.log("no access")
@@ -26,9 +26,72 @@ exports.home = (req, res, next) => {
 };
 exports.addRecord = (req, res, next) => {
     console.log("add record")
-    console.log(req.body)
-    res.status(200).json({
-        success: true,
-        code: 200
-    })
+    if (req.code === 401) {
+        console.log("no access")
+        res.status(req.code).json({
+            code: req.code,
+            success: false,
+
+        })
+    }
+    else {
+        console.log(req.body)
+        res.status(200).json({
+            success: true,
+            code: 200
+        })
+    }
+}
+exports.dashboard = (req, res, next) => {
+    console.log("dashboard")
+    if (req.code === 401) {
+        console.log("no access")
+        res.status(req.code).json({
+            code: req.code,
+            success: false,
+
+        })
+    }
+    else {
+        console.log(req.body)
+        res.status(200).json({
+            success: true,
+            code: 200
+        })
+    }
+}
+exports.alerts = (req, res, next) => {
+    console.log("alerts")
+    if (req.code === 401) {
+        console.log("no access")
+        res.status(req.code).json({
+            code: req.code,
+            success: false,
+
+        })
+    }
+    else {
+        res.status(200).json({
+            success: true,
+            code: 200
+        })
+    }
+}
+exports.alert = (req, res, next) => {
+    console.log("alert")
+    if (req.code === 401) {
+        console.log("no access")
+        res.status(req.code).json({
+            code: req.code,
+            success: false,
+
+        })
+    }
+    else {
+        console.log(req.params)
+        res.status(200).json({
+            success: true,
+            code: 200
+        })
+    }
 }
