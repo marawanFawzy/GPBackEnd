@@ -17,7 +17,7 @@ const store = new mongoDBStore({
   collection: 'sessions'
 })
 var bodyParser = require("body-parser");
-
+const db = require('./util/database')
 const hpp = require("hpp");
 
 var app = express();
@@ -81,15 +81,8 @@ app.use(commonRoutes); // login register otp log_out
 app.use(adminRoutes); // admin download
 app.use(userRoutes); // home upload  
 
-//not found handler 
-app.use((req, res, next) => {
-  if (res.statusCode === 401)
-    res.render('401', { pageTitle: 'Unauthorized', path: '/401', isAuthenticated: req.session.isLoggedIn, isAdmin: req.session.isAdmin });
-  else
-    res.status(404).json({ code: '404', pageTitle: 'Page Not Found', path: '/404', isAuthenticated: req.session.isLoggedIn, isAdmin: req.session.isAdmin });
+db.end();
 
-
-});
 mongoose.connect(
   MongoURI
 ).then((result) => {
