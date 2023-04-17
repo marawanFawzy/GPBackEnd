@@ -10,4 +10,5 @@ router.get('/download?:image_name', auth.adminCheck, adminController.downloadFil
 router.post('/addDoctor', auth.adminCheck, adminController.addDoctor)
 router.post('/search', auth.adminCheck, adminController.search)
 router.post('/editDoctor', auth.adminCheck, adminController.editdoc)
+router.get('/predict', adminController.predict)
 module.exports = router

@@ -1,6 +1,7 @@
 const doctor = require('../models/doctors')
 const path = require('path')
 const fs = require('fs')
+const { default: axios } = require('axios')
 exports.downloadFile = (req, res, next) => {
     if (res.statusCode === 401) {
         next()
@@ -93,4 +94,34 @@ exports.editdoc = (req, res, next) => {
         })
     }
 
+}
+exports.predict = (req, res, next) => {
+    axios
+        .get(
+            "http://localhost:5000/predict",
+            {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                }
+            },
+        )
+        .then(
+            (responseJson) => {
+                success = responseJson.data.success
+                code = responseJson.data.code
+                if (success) {
+                    console.log(responseJson.data)
+                }
+                else {
+                    console.log("error")
+                    console.log(responseJson.data)
+                }
+                res.json(responseJson.data)
+            })
+        .catch(
+            (error) => {
+                console.log(error)
+            });
 }
