@@ -226,53 +226,56 @@ form {
   }
 }
 
-.name { 
-    font-size: 1.2rem;
-    text-align: center;
+.name {
+  font-size: 1.2rem;
+  text-align: center;
 }
 
 .form-control {
-    margin: 1rem 0;
-  }
-  
-  .form-control label,
-  .form-control input,
-  .form-control textarea {
-    display: block;
-    width: 100%;
-    margin-bottom: 0.25rem;
-  }
-  
-  .form-control input,
-  .form-control textarea {
-    border: 1px solid #a1a1a1;
-    font: inherit;
-    border-radius: 2px;
-  }
-  
-  .form-control input:focus,
-  .form-control textarea:focus {
-    outline-color: #00695c;
-  }
-  .form-frame {
-    width: 20rem;
-    max-width: 90%;
-    margin: auto;
-    display: block;
+  margin: 1rem 0;
 }
+
+.form-control label,
+.form-control input,
+.form-control textarea {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.25rem;
+}
+
+.form-control input,
+.form-control textarea {
+  border: 1px solid #a1a1a1;
+  font: inherit;
+  border-radius: 2px;
+}
+
+.form-control input:focus,
+.form-control textarea:focus {
+  outline-color: #00695c;
+}
+
+.form-frame {
+  width: 20rem;
+  max-width: 90%;
+  margin: auto;
+  display: block;
+}
+
 .btn-link {
-    border: none;
-    outline: none;
-    background: none;
-    cursor: pointer;
-    padding: 0;
-    font-family: inherit;
-    font-size: inherit;
-    display: inline-block;
-    text-decoration: none;
-    font: inherit;
-    color: white;
+  border: none;
+  outline: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  display: inline-block;
+  text-decoration: none;
+  font: inherit;
+  color: white;
 }
+
 .btn-link:hover,
 .btn-link:active {
   color: yellow;
