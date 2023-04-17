@@ -151,3 +151,20 @@ exports.changePassword = (req, res, next) => {
     }
 
 }
+exports.logOut = (req, res, next) => {
+    req.session.destroy(function (err) {
+        if (err) {
+            console.log(err);
+            res.json({
+                success: false,
+                code: 500,
+            });
+        } else {
+            console.log("logged out");
+            res.json({
+                success: true,
+                code: 200,
+            });
+        }
+    })
+}

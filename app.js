@@ -2,12 +2,20 @@ require("dotenv").config();
 const express = require("express");
 const cors = require('cors')
 const session = require('express-session');
+const MongoURI = 'mongodb+srv://' + process.env.mongoName + ':' + process.env.mongoPass + '@security.qhsfmpj.mongodb.net/test'
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
 const xss = require("xss-clean");
 const multer = require('multer');
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const mongoose = require("mongoose");
+const mongoDBStore = require('connect-mongodb-session')(session)
+mongoose.set('strictQuery', true);
+const store = new mongoDBStore({
+  uri: MongoURI,
+  collection: 'sessions'
+})
 var bodyParser = require("body-parser");
 
 const hpp = require("hpp");
@@ -58,13 +66,13 @@ app.use(
 
 app.use(
   session({
-    secret: "This is a secret",
-    name: "my test",
+    secret: process.env.secret,
+    name: "Epidemic Prediction",
     cookie: {
       secure: false,
       maxAge: 30000 * 60 * 60 * 24 * 7, // 1 week
     },
-    //store: store,
+    store: store,
     resave: false,
     saveUninitialized: false,
   })
@@ -82,4 +90,11 @@ app.use((req, res, next) => {
 
 
 });
-app.listen(4000)
+mongoose.connect(
+  MongoURI
+).then((result) => {
+  app.listen(4000)
+  console.log('connected to database')
+}).catch(err => {
+  console.log(err)
+})
