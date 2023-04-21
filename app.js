@@ -48,8 +48,6 @@ app.use(helmet());
 app.use(mongoSanitize());
 app.use(xss());
 app.use(hpp());
-app.set("view engine", "ejs");
-app.set("views", "views");
 const adminRoutes = require("./routes/admin");
 const commonRoutes = require("./routes/common");
 const userRoutes = require("./routes/doctor");
