@@ -34,7 +34,7 @@ exports.downloadFile = (req, res, next) => {
 }
 
 exports.search = (req, res, next) => {
-    console.log("search for doctor")
+
     //TODO: find in database then send the data to search page as response then it forwords this data to the view
     console.log(req.body)
     if (req.code === 200) {
@@ -65,7 +65,6 @@ exports.adminPages = (req, res, next) => {
     }
 }
 exports.addDoctor = (req, res, next) => {
-    console.log("add doctor")
     const data = req.body
     try {
         bcryptjs.hash(data.Nid, 10, async (error, hashedpassword) => {
@@ -74,7 +73,6 @@ exports.addDoctor = (req, res, next) => {
                 req.code = 500
                 throw new Error()
             }
-            console.log(hashedpassword)
             const newUser = new User(data.Fname, hashedpassword, data.Lname, data.Nid, "test temp spec", data.gender, "mareel.sena@gmail.com", 1, 1, data.researcher, data.doctor, data.observer)
             newUser.save()
                 .then(() => {

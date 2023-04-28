@@ -12,7 +12,6 @@ let transport = nodemailer.createTransport({
 })
 
 exports.login = (req, res, next) => {
-    console.log("login")
     const password = req.body.password
     const email = req.body.email
     User.findOne(email)
@@ -107,7 +106,6 @@ exports.ResetPassword = (req, res, next) => {
         });
 }
 exports.ConfirmCode = (req, res, next) => {
-    console.log(req.body.number)
     try {
         Rtoken = req.get('Authorization').split(' ')[1]
         const decodeToken = jwt.verify(Rtoken, 'someStrongKey');
@@ -172,7 +170,6 @@ exports.changePassword = (req, res, next) => {
                                 else
                                     throw new Error()
                             }).catch((err) => {
-                                console.log(1)
                                 res.status(500).json({
                                     success: false,
                                     code: 500,
@@ -184,7 +181,6 @@ exports.changePassword = (req, res, next) => {
                     throw new Error()
 
             }).catch((err) => {
-                console.log(2)
                 res.status(404).json({
                     success: false,
                     code: 404,
@@ -192,7 +188,6 @@ exports.changePassword = (req, res, next) => {
             });
     }
     catch (err) {
-        console.log(3)
         res.status(401).json({
             success: false,
             code: 401,
@@ -208,7 +203,6 @@ exports.logOut = (req, res, next) => {
                 code: 500,
             });
         } else {
-            console.log("logged out");
             res.json({
                 success: true,
                 code: 200,

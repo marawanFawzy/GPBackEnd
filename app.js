@@ -6,6 +6,7 @@ const MongoURI = 'mongodb+srv://' + process.env.mongoName + ':' + process.env.mo
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
 const xss = require("xss-clean");
+const morgan = require("morgan");
 const multer = require('multer');
 const path = require("path");
 const cookieParser = require("cookie-parser");
@@ -43,7 +44,11 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "images")));
 app.use(cookieParser());
-
+app.use(
+  morgan(
+    ':method :url :status :res[content-length] - :response-time ms'
+  )
+);
 app.use(helmet());
 app.use(mongoSanitize());
 app.use(xss());
