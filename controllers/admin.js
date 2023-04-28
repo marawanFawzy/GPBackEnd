@@ -34,6 +34,7 @@ exports.downloadFile = (req, res, next) => {
 
 exports.search = (req, res, next) => {
     console.log("search for doctor")
+    //TODO: find in database then send the data to search page as response then it forwords this data to the view
     console.log(req.body)
     if (req.code === 200) {
         res.status(req.code).json({
@@ -64,9 +65,9 @@ exports.adminPages = (req, res, next) => {
 }
 exports.addDoctor = (req, res, next) => {
     console.log("add doctor")
-    console.log(req.body)
     const data = req.body
-    const newUser = new User(data.Fname,"password", data.Lname, data.Nid, "test temp spec", data.gender, "marawanfawzy15@gmail.com", 1, 1, data.researcher, data.doctor, data.observer)
+    //TODO: hash the password
+    const newUser = new User(data.Fname, "password", data.Lname, data.Nid, "test temp spec", data.gender, "marawanfawzy15@gmail.com", 1, 1, data.researcher, data.doctor, data.observer)
     newUser.save()
         .then(() => {
             console.log("added")
@@ -92,6 +93,7 @@ exports.addDoctor = (req, res, next) => {
 exports.editdoc = (req, res, next) => {
     console.log("doctor data changed")
     console.log(req.body)
+    //TODO: get the data then send it to update the user in the database 
     if (req.code === 200) {
         res.status(req.code).json({
             success: true,
@@ -107,6 +109,7 @@ exports.editdoc = (req, res, next) => {
 
 }
 exports.predict = (req, res, next) => {
+    //TEST: trying to connect 2 backends
     axios
         .get(
             "http://localhost:5000/predict",

@@ -15,6 +15,7 @@ exports.login = (req, res, next) => {
     console.log("login")
     const password = req.body.password
     const email = req.body.email
+    //TODO: compare password with hashed password
     User.findOne(email)
         .then(([result, meta]) => {
             if (result[0] && password == result[0]["pass"]) { // correct password
@@ -26,6 +27,7 @@ exports.login = (req, res, next) => {
                     }, 'someStrongKey',
                     { expiresIn: '24h' }
                 )
+                //TODO: change and get admins from the database not hard coded
                 if (email == "marawa.fawzy@gmail.com") {
                     req.session.admin = true
                     req.session.loggedIn = false
@@ -138,6 +140,7 @@ exports.changePassword = (req, res, next) => {
                 if (result[0]) {
                     const foundUser = new User()
                     foundUser.email = email
+                    //TODO: hash password
                     foundUser.updatePassword(req.body.newPassword)
                         .then(([result, meta]) => {
                             if (result["changedRows"] != 0 && req.session.changePassword) {

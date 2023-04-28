@@ -36,6 +36,8 @@ exports.userPages = (req, res, next) => {
 };
 exports.addRecord = (req, res, next) => {
     console.log("add record")
+    //TODO: add patients to the database and update if exists
+    //TODO: add diagnosis to the database
     if (req.code === 401) {
         console.log("no access")
         res.status(req.code).json({
@@ -54,6 +56,8 @@ exports.addRecord = (req, res, next) => {
 }
 exports.dashboard = (req, res, next) => {
     console.log("dashboard")
+    //TODO: get the data to render the dashboards 
+    //hint: call flask backend 
     if (req.code === 401) {
         console.log("no access")
         res.status(req.code).json({
@@ -72,6 +76,7 @@ exports.dashboard = (req, res, next) => {
 }
 exports.alerts = (req, res, next) => {
     console.log("alerts")
+    //TODO: fetch all alerts data 
     if (req.code === 401) {
         console.log("no access")
         res.status(req.code).json({
@@ -89,6 +94,7 @@ exports.alerts = (req, res, next) => {
 }
 exports.alert = (req, res, next) => {
     console.log("alert")
+    //TODO:fetch single alert (discuss with pola)
     if (req.code === 401) {
         console.log("no access")
         res.status(req.code).json({

@@ -8,5 +8,6 @@
 [] 8- fixes to download file of reports 
 [x] 9- how to invalidate jwt server side even if not expired 
 [x] 10- add session and cookies 
-[] 11- database creation and the avail. of adding sessions in rest api mode 
-[] 12- vercel deploy
+[x] 11- database creation and the avail. of adding sessions in rest api mode 
+[] 12- resolve all TODOs
+[] 13- vercel deploy
