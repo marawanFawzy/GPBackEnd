@@ -37,9 +37,8 @@ exports.login = (req, res, next) => {
 
                 res.status(200).json({ code: 200, Atoken: Atoken, success: true, email: email, admin: req.session.admin })
             }
-            else {
+            else
                 throw new Error()
-            }
         }).catch((err) => {
             console.log("wrong")
             req.session.loggedIn = false
@@ -55,7 +54,6 @@ exports.ResetPassword = (req, res, next) => {
                 console.log("found")
             else
                 throw new Error()
-            console.log(result)
             number = Math.round(Math.floor(Math.random() * 999999 - 1000000 + 1) + 1000000)
             transport.sendMail({
                 from: process.env.MAIL,
@@ -81,12 +79,14 @@ exports.ResetPassword = (req, res, next) => {
                         res.status(200).json({
                             success: true,
                             code: 200,
-                            Rtoken: Rtoken
+                            Rtoken: Rtoken,
+
                         })
                     }
                 })
         })
         .catch((err) => {
+            console.log("not found")
             res.status(500).json({
                 success: false,
                 code: 500,
@@ -97,23 +97,19 @@ exports.ConfirmCode = (req, res, next) => {
     console.log(req.body.number)
     try {
         Rtoken = req.get('Authorization').split(' ')[1]
-        number = req.body.number
-        confirmNumber = req.session.number
         const decodeToken = jwt.verify(Rtoken, 'someStrongKey');
         email = decodeToken.email
         if (decodeToken.refreshOnly && req.session.changePassword) {
-            if (number == confirmNumber) {
+            if (req.body.number == req.session.number) {
                 res.status(200).json({
                     success: true,
                     code: 200,
-                    email: email,
                 })
             }
             else {
                 res.status(403).json({
                     success: false,
                     code: 403,
-
                 })
             }
         }
@@ -121,7 +117,6 @@ exports.ConfirmCode = (req, res, next) => {
             res.status(401).json({
                 success: false,
                 code: 401,
-
             })
         }
     }
@@ -136,17 +131,16 @@ exports.ConfirmCode = (req, res, next) => {
 exports.changePassword = (req, res, next) => {
     try {
         Rtoken = req.get('Authorization').split(' ')[1]
-        newPassword = req.body.newPassword
         const decodeToken = jwt.verify(Rtoken, 'someStrongKey');
         email = decodeToken.email
-        User.findOne(email).
-            then(([result, meta]) => {
+        User.findOne(email)
+            .then(([result, meta]) => {
                 if (result[0]) {
                     const foundUser = new User()
-                    foundUser.email= email
-                    foundUser.updatePassword(newPassword)
+                    foundUser.email = email
+                    foundUser.updatePassword(req.body.newPassword)
                         .then(([result, meta]) => {
-                            if (result["changedRows"] === 1 && req.session.changePassword) {
+                            if (result["changedRows"] != 0 && req.session.changePassword) {
                                 console.log("updated")
                                 req.session.destroy(() => {
                                     console.log("destroy session")
@@ -156,17 +150,29 @@ exports.changePassword = (req, res, next) => {
                                     code: 200,
                                 })
                             }
-                            else throw new Error()
-                        }).catch((err) => {                        
-                            throw new Error()
+                            else
+                                throw new Error()
+                        }).catch((err) => {
+                            console.log(1)
+                            res.status(500).json({
+                                success: false,
+                                code: 500,
+                            })
                         })
-
                 }
+                else
+                    throw new Error()
+
             }).catch((err) => {
-                throw new Error()
+                console.log(2)
+                res.status(404).json({
+                    success: false,
+                    code: 404,
+                })
             });
     }
     catch (err) {
+        console.log(3)
         res.status(401).json({
             success: false,
             code: 401,
