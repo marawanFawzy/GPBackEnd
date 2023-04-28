@@ -12,15 +12,26 @@ exports.userPages = (req, res, next) => {
     }
     else {
         console.log("this is home")
-        res.status(req.code).json({
-            email: req.email,
-            code: req.code,
-            // find and return level 
-            success: true,
-            researcher: true,
-            doctor: true,
-            observer: true,
-        })
+        User.findOne(req.email)
+            .then(([result, meta]) => {
+                if (result[0]) {
+                    res.status(req.code).json({
+                        code: req.code,
+                        success: true,
+                        researcher: result[0]['is_researcher'],
+                        doctor: result[0]['is_doctor'],
+                        observer: result[0]['is_observer'],
+                    })
+                }
+                else
+                    throw new Error()
+            }).catch((err) => {
+                res.status(404).json({
+                    code: 404,
+                    success: false,
+                })
+            })
+
     }
 };
 exports.addRecord = (req, res, next) => {
