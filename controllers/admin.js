@@ -1,6 +1,7 @@
 const User = require('../models/users')
 const path = require('path')
 const fs = require('fs')
+const bcryptjs = require("bcryptjs");
 const { default: axios } = require('axios')
 exports.downloadFile = (req, res, next) => {
     if (res.statusCode === 401) {
@@ -66,27 +67,41 @@ exports.adminPages = (req, res, next) => {
 exports.addDoctor = (req, res, next) => {
     console.log("add doctor")
     const data = req.body
-    //TODO: hash the password
-    const newUser = new User(data.Fname, "password", data.Lname, data.Nid, "test temp spec", data.gender, "marawanfawzy15@gmail.com", 1, 1, data.researcher, data.doctor, data.observer)
-    newUser.save()
-        .then(() => {
-            console.log("added")
-        }
-        )
-        .catch((err) => {
-            console.log(err)
-            req.code = 501
-        });
-    if (req.code === 200) {
-        res.status(req.code).json({
-            success: true,
-            code: req.code
+    try {
+        bcryptjs.hash(data.Nid, 10, async (error, hashedpassword) => {
+            if (error) {
+                console.log(error)
+                req.code = 500
+                throw new Error()
+            }
+            console.log(hashedpassword)
+            const newUser = new User(data.Fname, hashedpassword, data.Lname, data.Nid, "test temp spec", data.gender, "mareel.sena@gmail.com", 1, 1, data.researcher, data.doctor, data.observer)
+            newUser.save()
+                .then(() => {
+                    console.log("added")
+                })
+                .catch((err) => {
+                    console.log(err)
+                    req.code = 501
+                });
+            if (req.code === 200) {
+                res.status(req.code).json({
+                    success: true,
+                    code: req.code
+                })
+            }
+            else {
+                res.status(req.code).json({
+                    success: false,
+                    code: req.code
+                })
+            }
         })
     }
-    else {
+    catch (err) {
         res.status(req.code).json({
             success: false,
-            code: req.code
+            code: req.code,
         })
     }
 }

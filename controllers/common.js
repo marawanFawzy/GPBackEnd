@@ -15,36 +15,47 @@ exports.login = (req, res, next) => {
     console.log("login")
     const password = req.body.password
     const email = req.body.email
-    //TODO: compare password with hashed password
     User.findOne(email)
         .then(([result, meta]) => {
-            if (result[0] && password == result[0]["pass"]) { // correct password
-                Atoken = jwt.sign(
-                    {
-                        email: email,
-                        id: 1,
-                        refreshOnly: false,
-                    }, 'someStrongKey',
-                    { expiresIn: '24h' }
-                )
-                //TODO: change and get admins from the database not hard coded
-                if (email == "marawa.fawzy@gmail.com") {
-                    req.session.admin = true
-                    req.session.loggedIn = false
-                }
-                else {
-                    req.session.loggedIn = true
-                    req.session.admin = false
-                }
+            if (result[0]) {
+                bcryptjs.compare(password, result[0]["pass"])
+                    .then((correct) => {
+                        if (correct) {
+                            Atoken = jwt.sign(
+                                {
+                                    email: email,
+                                    id: 1,
+                                    refreshOnly: false,
+                                }, 'someStrongKey',
+                                { expiresIn: '24h' }
+                            )
+                            if (result[0]["is_admin"]) {
+                                req.session.admin = true
+                                req.session.loggedIn = false
+                            }
+                            else {
+                                req.session.loggedIn = true
+                                req.session.admin = false
+                            }
 
-                res.status(200).json({ code: 200, Atoken: Atoken, success: true, email: email, admin: req.session.admin })
+                            res.status(200).json({ code: 200, Atoken: Atoken, success: true, email: email, admin: req.session.admin })
+                        }
+                        else {
+                            throw new Error()
+                        }
+                    }).catch(err => {
+                        console.log("wrong password")
+                        req.session.loggedIn = false
+                        res.status(403).json({ code: 403, success: false })
+                    })
+
             }
             else
                 throw new Error()
         }).catch((err) => {
-            console.log("wrong")
+            console.log(err)
             req.session.loggedIn = false
-            res.status(401).json({ code: 403, success: false })
+            res.status(403).json({ code: 403, success: false })
         })
 
 };
@@ -140,28 +151,34 @@ exports.changePassword = (req, res, next) => {
                 if (result[0]) {
                     const foundUser = new User()
                     foundUser.email = email
-                    //TODO: hash password
-                    foundUser.updatePassword(req.body.newPassword)
-                        .then(([result, meta]) => {
-                            if (result["changedRows"] != 0 && req.session.changePassword) {
-                                console.log("updated")
-                                req.session.destroy(() => {
-                                    console.log("destroy session")
+                    bcryptjs.hash(req.body.newPassword, 10, async (error, hashedpassword) => {
+                        if (error) {
+                            console.log(error)
+                            req.code = 500
+                            throw new Error()
+                        }
+                        foundUser.updatePassword(hashedpassword)
+                            .then(([result, meta]) => {
+                                if (result["changedRows"] != 0 && req.session.changePassword) {
+                                    console.log("updated")
+                                    req.session.destroy(() => {
+                                        console.log("destroy session")
+                                    })
+                                    res.status(200).json({
+                                        success: true,
+                                        code: 200,
+                                    })
+                                }
+                                else
+                                    throw new Error()
+                            }).catch((err) => {
+                                console.log(1)
+                                res.status(500).json({
+                                    success: false,
+                                    code: 500,
                                 })
-                                res.status(200).json({
-                                    success: true,
-                                    code: 200,
-                                })
-                            }
-                            else
-                                throw new Error()
-                        }).catch((err) => {
-                            console.log(1)
-                            res.status(500).json({
-                                success: false,
-                                code: 500,
                             })
-                        })
+                    })
                 }
                 else
                     throw new Error()
