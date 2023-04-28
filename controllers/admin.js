@@ -66,8 +66,7 @@ exports.addDoctor = (req, res, next) => {
     console.log("add doctor")
     console.log(req.body)
     const data = req.body
-    console.log(data)
-    const newUser = new User(data.Fname, data.Lname, data.Nid, "test temp spec", data.gender, "test email2", 1, 1, data.researcher, data.doctor, data.observer)
+    const newUser = new User(data.Fname,"password", data.Lname, data.Nid, "test temp spec", data.gender, "marawanfawzy15@gmail.com", 1, 1, data.researcher, data.doctor, data.observer)
     newUser.save()
         .then(() => {
             console.log("added")
@@ -75,6 +74,7 @@ exports.addDoctor = (req, res, next) => {
         )
         .catch((err) => {
             console.log(err)
+            req.code = 501
         });
     if (req.code === 200) {
         res.status(req.code).json({

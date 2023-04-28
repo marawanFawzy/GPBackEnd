@@ -85,5 +85,5 @@ mongoose.connect(
   app.listen(4000)
   console.log('connected to database')
 }).catch(err => {
-  console.log(err)
+  console.log("can not connect to database")
 })
