@@ -52,4 +52,7 @@ module.exports = class User {
     static findOne(email) {
         return db.execute('SELECT * FROM users WHERE email =?', [email])
     }
+    static findOneByiD(Nid) {
+        return db.execute('SELECT * FROM users WHERE national_id =?', [Nid])
+    }
 }

@@ -34,21 +34,31 @@ exports.downloadFile = (req, res, next) => {
 }
 
 exports.search = (req, res, next) => {
-
     //TODO: find in database then send the data to search page as response then it forwords this data to the view
     console.log(req.body)
-    if (req.code === 200) {
-        res.status(req.code).json({
-            success: true,
-            code: req.code
+    User.findOneByiD(req.body.Nid)
+        .then(([result, meta]) => {
+            if (result[0] && req.code === 200) {
+                res.status(req.code).json({
+                    success: true,
+                    code: req.code
+                })
+            }
+            else {
+                console.log("not found")
+                res.status(404).json({
+                    success: false,
+                    code: 404
+                })
+            }
         })
-    }
-    else {
-        res.status(req.code).json({
-            success: false,
-            code: req.code
-        })
-    }
+        .catch((err) => {
+            console.log(err)
+            res.status(500).json({
+                success: false,
+                code: 500
+            })
+        });
 }
 exports.adminPages = (req, res, next) => {
     if (req.code === 200) {
@@ -63,6 +73,26 @@ exports.adminPages = (req, res, next) => {
             code: req.code
         })
     }
+}
+exports.loadDoctorData = (req, res, next) => {
+    User.findOneByiD(req.params.Nid)
+        .then(([result, meta]) => {
+            if (result[0] && req.code === 200) {
+                res.status(200).json({
+                    success: true,
+                    code: 200,
+                    data: result[0]
+                })
+            }
+            else
+                throw new Error()
+        })
+        .catch((err) => {
+            res.status(500).json({
+                success: false,
+                code: 500
+            })
+        })
 }
 exports.addDoctor = (req, res, next) => {
     const data = req.body
