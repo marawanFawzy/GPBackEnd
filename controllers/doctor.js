@@ -1,4 +1,4 @@
-const User = require('../models/doctors')
+const User = require('../models/users')
 const path = require('path')
 const fs = require('fs')
 exports.userPages = (req, res, next) => {

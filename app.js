@@ -79,8 +79,6 @@ app.use(commonRoutes); // login register otp log_out
 app.use(adminRoutes); // admin download
 app.use(userRoutes); // home upload  
 
-db.end();
-
 mongoose.connect(
   MongoURI
 ).then((result) => {

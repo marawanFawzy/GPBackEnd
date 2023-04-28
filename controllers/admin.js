@@ -1,4 +1,4 @@
-const doctor = require('../models/doctors')
+const User = require('../models/users')
 const path = require('path')
 const fs = require('fs')
 const { default: axios } = require('axios')
@@ -65,6 +65,17 @@ exports.adminPages = (req, res, next) => {
 exports.addDoctor = (req, res, next) => {
     console.log("add doctor")
     console.log(req.body)
+    const data = req.body
+    console.log(data)
+    const newUser = new User(data.Fname, data.Lname, data.Nid, "test temp spec", data.gender, "test email2", 1, 1, data.researcher, data.doctor, data.observer)
+    newUser.save()
+        .then(() => {
+            console.log("added")
+        }
+        )
+        .catch((err) => {
+            console.log(err)
+        });
     if (req.code === 200) {
         res.status(req.code).json({
             success: true,
