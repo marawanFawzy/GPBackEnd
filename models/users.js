@@ -36,7 +36,7 @@ module.exports = class User {
             email=?,hospital_id=?,
             address=?,is_researcher=?,
             is_doctor=?,is_observer=? 
-            WHERE user_id =? ` ,
+            WHERE national_id =? ` ,
             [this.first_name, this.last_name,
             this.specialization, this.gender, this.email, this.hospital_id,
             this.address, this.is_researcher, this.is_doctor,
@@ -47,7 +47,7 @@ module.exports = class User {
             [password, this.email])
     }
     static deleteById(id) {
-        return db.execute('DELETE FROM users WHERE user_id =?', [id])
+        return db.execute('DELETE FROM users WHERE national_id =?', [id])
     }
     static findAll() {
         return db.execute('SELECT * FROM users')
