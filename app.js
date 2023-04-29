@@ -22,7 +22,6 @@ const db = require('./util/database')
 const hpp = require("hpp");
 
 var app = express();
-
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'images');
@@ -60,7 +59,7 @@ const userRoutes = require("./routes/doctor");
 
 app.use(
   cors({
-    origin: "http://192.168.1.31:3000",
+    origin: process.env.URL + ":3000",
     methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true, // enable set cookie
     exposedHeaders: ["set-cookie"],
@@ -83,6 +82,7 @@ app.use(
 app.use(commonRoutes); // login register otp log_out 
 app.use(adminRoutes); // admin download
 app.use(userRoutes); // home upload  
+
 
 mongoose.connect(
   MongoURI

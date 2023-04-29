@@ -35,29 +35,36 @@ exports.downloadFile = (req, res, next) => {
 
 exports.search = (req, res, next) => {
     console.log(req.body)
-    User.findOneByiD(req.body.Nid)
-        .then(([result, meta]) => {
-            if (result[0] && req.code === 200) {
-                res.status(req.code).json({
-                    success: true,
-                    code: req.code
-                })
-            }
-            else {
-                console.log("not found")
-                res.status(404).json({
-                    success: false,
-                    code: 404
-                })
-            }
-        })
-        .catch((err) => {
-            console.log(err)
-            res.status(500).json({
-                success: false,
-                code: 500
+    if (req.code === 200)
+        User.findOneByiD(req.body.Nid)
+            .then(([result, meta]) => {
+                if (result[0]) {
+                    res.status(req.code).json({
+                        success: true,
+                        code: req.code
+                    })
+                }
+                else {
+                    console.log("not found")
+                    res.status(404).json({
+                        success: false,
+                        code: 404
+                    })
+                }
             })
-        });
+            .catch((err) => {
+                console.log(err)
+                res.status(500).json({
+                    success: false,
+                    code: 500
+                })
+            });
+    else {
+        res.status(req.code).json({
+            success: false,
+            code: req.code
+        })
+    }
 }
 exports.adminPages = (req, res, next) => {
     if (req.code === 200) {
