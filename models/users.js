@@ -1,7 +1,7 @@
 const db = require('../util/database')
 
 module.exports = class User {
-    constructor(first_name = "", password = "", last_name = "", national_id = "",
+    constructor(first_name = "", last_name = "", national_id = "",
         specialization = "", gender = "", birth_date = "", email = "", hospital_id = "",
         address = "", is_researcher = "", is_doctor = "",
         is_observer = "") {
@@ -12,7 +12,6 @@ module.exports = class User {
         this.gender = gender
         this.birth_date = birth_date
         this.email = email
-        this.password = password
         this.hospital_id = hospital_id
         this.address = address
         this.is_researcher = is_researcher
@@ -21,24 +20,27 @@ module.exports = class User {
         this.created_at = Date.now()
     }
     save() {
-        return db.execute(`INSERT INTO users (first_name,pass,last_name,national_id,
+        return db.execute(`INSERT INTO users (first_name,last_name,national_id,
                             specialization,gender,birth_date,email,hospital_id,
                             address,is_researcher,is_doctor,
-                            is_observer,created_at) VALUES (?,?,?,?,?,?,CAST(? AS DATETIME) ,?,?,?,?,?,?,CURRENT_TIMESTAMP)` ,
-            [this.first_name, this.password, this.last_name, this.national_id,
+                            is_observer,created_at) VALUES (?,?,?,?,?,CAST(? AS DATETIME) ,?,?,?,?,?,?,CURRENT_TIMESTAMP)` ,
+            [this.first_name, this.last_name, this.national_id,
             this.specialization, this.gender, this.birth_date, this.email, this.hospital_id,
             this.address, this.is_researcher, this.is_doctor,
             this.is_observer])
     }
-    update(id) {
-        return db.execute(`UPDATE users SET first_name =?,pass=?,last_name=?,national_id=?,
-            specialization=?,gender=?,email=?,hospital_id=?,
-            address=?,is_researcher=?,is_doctor=?,
-            is_observer=? WHERE user_id =? ` ,
-            [this.first_name, this.password, this.last_name, this.national_id,
+    update() {
+        return db.execute(`UPDATE users SET 
+            first_name =?,last_name=?,
+            specialization=?,gender=?,
+            email=?,hospital_id=?,
+            address=?,is_researcher=?,
+            is_doctor=?,is_observer=? 
+            WHERE user_id =? ` ,
+            [this.first_name, this.last_name,
             this.specialization, this.gender, this.email, this.hospital_id,
             this.address, this.is_researcher, this.is_doctor,
-            this.is_observer, id])
+            this.is_observer, this.national_id])
     }
     updatePassword(password) {
         return db.execute(`UPDATE users SET pass=? WHERE email =? `,

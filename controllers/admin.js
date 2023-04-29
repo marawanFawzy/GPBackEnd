@@ -76,54 +76,53 @@ exports.adminPages = (req, res, next) => {
 exports.loadDoctorData = (req, res, next) => {
     User.findOneByiD(req.params.Nid)
         .then(([result, meta]) => {
-            if (result[0] && req.code === 200) {
+            if (!result[0])
+                throw new Error()
+            else if (req.code === 200) {
                 res.status(200).json({
                     success: true,
                     code: 200,
                     data: result[0]
                 })
             }
-            else
-                throw new Error()
+            else {
+                res.status(500).json({
+                    success: false,
+                    code: 500
+                })
+            }
         })
         .catch((err) => {
-            res.status(500).json({
+            res.status(404).json({
                 success: false,
-                code: 500
+                code: 404
             })
         })
 }
 exports.addDoctor = (req, res, next) => {
     const data = req.body
     try {
-        bcryptjs.hash(data.Nid, 10, async (error, hashedpassword) => {
-            if (error) {
-                console.log(error)
-                req.code = 500
-                throw new Error()
-            }
-            const newUser = new User(data.Fname, hashedpassword, data.Lname, data.Nid, data.specialization, data.gender, data.birth, data.email, 1, 1, data.researcher, data.doctor, data.observer)
-            newUser.save()
-                .then(() => {
-                    console.log("added")
-                })
-                .catch((err) => {
-                    console.log(err)
-                    req.code = 501
-                });
-            if (req.code === 200) {
-                res.status(req.code).json({
-                    success: true,
-                    code: req.code
-                })
-            }
-            else {
-                res.status(req.code).json({
-                    success: false,
-                    code: req.code
-                })
-            }
-        })
+        const newUser = new User(data.Fname, data.Lname, data.Nid, data.specialization, data.gender, data.birth, data.email, 1, 1, data.researcher, data.doctor, data.observer)
+        newUser.save()
+            .then(() => {
+                console.log("added")
+            })
+            .catch((err) => {
+                console.log(err)
+                req.code = 501
+            });
+        if (req.code === 200) {
+            res.status(req.code).json({
+                success: true,
+                code: req.code
+            })
+        }
+        else {
+            res.status(req.code).json({
+                success: false,
+                code: req.code
+            })
+        }
     }
     catch (err) {
         res.status(req.code).json({
@@ -135,12 +134,34 @@ exports.addDoctor = (req, res, next) => {
 exports.editdoc = (req, res, next) => {
     console.log("doctor data changed")
     console.log(req.body)
-    //TODO: get the data then send it to update the user in the database 
+    const data = req.body
     if (req.code === 200) {
-        res.status(req.code).json({
-            success: true,
-            code: req.code
-        })
+        const newUser = new User(data.Fname, data.Lname, data.Nid, data.specialization, data.gender, data.birth, data.email, 1, 1, data.researcher, data.doctor, data.observer)
+        console.log(data.Nid)
+        console.log(data.specialization)
+        console.log(data.email)
+        newUser.update()
+            .then(([result, meta]) => {
+                console.log(result)
+                if (result.affectedRows === 1) {
+                    console.log("edited")
+                    res.status(req.code).json({
+                        success: true,
+                        code: req.code
+                    })
+                }
+                else
+                    res.status(404).json({
+                        success: false,
+                        code: 404
+                    })
+            }).catch((err) => {
+                console.log(err)
+                res.status(500).json({
+                    success: false,
+                    code: 500
+                })
+            })
     }
     else {
         res.status(req.code).json({
@@ -148,7 +169,6 @@ exports.editdoc = (req, res, next) => {
             code: req.code
         })
     }
-
 }
 exports.predict = (req, res, next) => {
     //TEST: trying to connect 2 backends

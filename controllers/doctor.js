@@ -116,7 +116,7 @@ exports.alerts = (req, res, next) => {
 
 }
 exports.alert = (req, res, next) => {
-    //TODO:fetch single alert (discuss with pola)
+    //WAIT:fetch single alert (discuss with pola)
     if (req.code === 401) {
         console.log("no access")
         res.status(req.code).json({
