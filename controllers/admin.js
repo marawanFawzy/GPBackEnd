@@ -34,7 +34,6 @@ exports.downloadFile = (req, res, next) => {
 }
 
 exports.search = (req, res, next) => {
-    //TODO: find in database then send the data to search page as response then it forwords this data to the view
     console.log(req.body)
     User.findOneByiD(req.body.Nid)
         .then(([result, meta]) => {
@@ -103,7 +102,7 @@ exports.addDoctor = (req, res, next) => {
                 req.code = 500
                 throw new Error()
             }
-            const newUser = new User(data.Fname, hashedpassword, data.Lname, data.Nid, "test temp spec", data.gender, "mareel.sena@gmail.com", 1, 1, data.researcher, data.doctor, data.observer)
+            const newUser = new User(data.Fname, hashedpassword, data.Lname, data.Nid, data.specialization, data.gender, data.birth, data.email, 1, 1, data.researcher, data.doctor, data.observer)
             newUser.save()
                 .then(() => {
                     console.log("added")

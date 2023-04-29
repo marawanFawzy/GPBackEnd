@@ -1,4 +1,5 @@
 const db = require('../util/database')
+const Diagnosis = require('./patient_diagnosis')
 
 module.exports = class Patient {
     constructor() {

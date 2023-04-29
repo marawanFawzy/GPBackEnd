@@ -1,4 +1,6 @@
 const User = require('../models/users')
+const Alert = require('../models/alerts')
+const Patient = require('../models/patients')
 const path = require('path')
 const fs = require('fs')
 exports.userPages = (req, res, next) => {
@@ -72,21 +74,46 @@ exports.dashboard = (req, res, next) => {
     }
 }
 exports.alerts = (req, res, next) => {
-    //TODO: fetch all alerts data 
-    if (req.code === 401) {
-        console.log("no access")
-        res.status(req.code).json({
-            code: req.code,
-            success: false,
+    Alert.findAll().then(([alerts, meta]) => {
+        if (req.code === 401) {
+            console.log("no access")
+            res.status(req.code).json({
+                code: req.code,
+                success: false,
+            })
+        }
+        else {
+            User.findOne(req.email)
+                .then(([result, meta]) => {
+                    if (result[0]) {
+                        res.status(req.code).json({
+                            code: req.code,
+                            success: true,
+                            researcher: result[0]['is_researcher'],
+                            doctor: result[0]['is_doctor'],
+                            observer: result[0]['is_observer'],
+                            alerts: alerts
+                        })
+                    }
+                    else
+                        throw new Error()
+                }).catch((err) => {
+                    res.status(404).json({
+                        code: 404,
+                        success: false,
+                    })
+                })
 
+        }
+    }).catch((err) => {
+        console.log(err)
+        res.status(500).json({
+            code: 500,
+            success: false,
         })
-    }
-    else {
-        res.status(200).json({
-            success: true,
-            code: 200
-        })
-    }
+    });
+
+
 }
 exports.alert = (req, res, next) => {
     //TODO:fetch single alert (discuss with pola)
