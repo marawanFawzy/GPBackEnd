@@ -3,6 +3,6 @@ const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     database: 'eprediction',
-    password: 'rootPassword#'
+    password: process.env.secretdb
 })
 module.exports = pool.promise();
