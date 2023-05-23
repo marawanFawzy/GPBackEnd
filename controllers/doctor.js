@@ -54,9 +54,8 @@ exports.addRecord = (req, res, next) => {
         })
     }
 }
-exports.dashboard = (req, res, next) => {
+exports.dynamicData = (req, res, next) => {
     //TODO: get the data to render the dashboards 
-    //hint: call flask backend 
     if (req.code === 401) {
         console.log("no access")
         res.status(req.code).json({
@@ -66,10 +65,35 @@ exports.dashboard = (req, res, next) => {
         })
     }
     else {
-        console.log(req.body)
         res.status(200).json({
             success: true,
-            code: 200
+            code: 200,
+            dateMonth: '2016/2017',
+            dateMonth2: '2018/2019',
+            dataMonth: [50, 23, 55, 60, 90, 90, 67, 69, 50, 58, 36, 54],
+            dataMonth2: [90, 74, 73, 97, 92, 80, 77, 100, 77, 85, 37, 54],
+            dateWeeks: '2016/2017',
+            dateWeeks2: '2018/2019',
+            dataWeeks: [50, 23, 55, 54, 90, 90, 67, 69, 50, 58, 36, 54, 50, 23, 55, 54, 90, 90, 67, 69, 50, 58, 36, 54, 50, 23, 55, 54, 90, 90, 67, 69, 50, 58, 36, 54, 50, 23, 55, 54, 90, 90, 67, 69, 50, 58, 36, 54, 30, 24, 14, 16],
+            dataWeeks2: [90, 74, 73, 97, 92, 80, 77, 100, 77, 85, 37, 54, 90, 74, 73, 97, 92, 80, 77, 100, 77, 85, 37, 54, 90, 74, 73, 97, 92, 80, 77, 100, 77, 85, 37, 54, 90, 74, 73, 97, 92, 80, 77, 100, 77, 85, 37, 54, 67, 89, 23, 124]
+        })
+    }
+}
+exports.staticData = (req, res, next) => {
+    //TODO: get the data to render the dashboards 
+    if (req.code === 401) {
+        console.log("no access")
+        res.status(req.code).json({
+            code: req.code,
+            success: false,
+        })
+    }
+    else {
+        res.status(200).json({
+            success: true,
+            code: 200,
+            gender: [400, 300],
+            age: [160, 320, 268, 472, 104],
         })
     }
 }
