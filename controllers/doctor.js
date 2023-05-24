@@ -94,6 +94,7 @@ exports.staticData = (req, res, next) => {
             code: 200,
             gender: [400, 300],
             age: [160, 320, 268, 472, 104],
+            numebrOfCases: 40,
         })
     }
 }
