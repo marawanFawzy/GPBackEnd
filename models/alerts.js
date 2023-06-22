@@ -4,12 +4,8 @@ module.exports = class Alert {
     constructor() {
 
     }
-    save() {
-    }
-    update(id) {
-    }
-    static deleteById(id) {
-        return db.execute('DELETE FROM alerts WHERE alert_id =?', [id])
+    markRead() {
+        return db.execute('update alerts SET is_read=1 WHERE alert_id =?', [this.id])
     }
     static findAll() {
         return db.execute('SELECT * FROM alerts')

@@ -1,8 +1,10 @@
 const User = require('../models/users')
 const Alert = require('../models/alerts')
 const Patient = require('../models/patients')
+const patient_diagnosis = require('../models/patient_diagnosis')
 const path = require('path')
 const fs = require('fs')
+const { count } = require('console')
 exports.userPages = (req, res, next) => {
     if (req.code === 401) {
         console.log("no access")
@@ -89,13 +91,61 @@ exports.staticData = (req, res, next) => {
         })
     }
     else {
-        res.status(200).json({
-            success: true,
-            code: 200,
-            gender: [400, 300],
-            age: [160, 320, 268, 472, 104],
-            numebrOfCases: 40,
-        })
+        patient_diagnosis.maleVSfemale()
+            .then(([resultMF, meta]) => {
+                if (!resultMF[0])
+                    throw new Error()
+                else if (req.code === 200) {
+                    patient_diagnosis.numberOfCases()
+                        .then(([result, meta]) => {
+                            if (!result[0])
+                                throw new Error()
+                            else {
+
+                                patient_diagnosis.ageRange()
+                                    .then(([resultAGE, meta]) => {
+                                        if (!resultAGE[0])
+                                            throw new Error()
+                                        else {
+                                            res.status(req.code).json({
+                                                success: true,
+                                                code: req.code,
+                                                gender: [resultMF[0]['MaleCount'], resultMF[0]['FemaleCount']],
+                                                age: [resultAGE[0]['PatientCount'], resultAGE[1]['PatientCount'], 
+                                                resultAGE[2]['PatientCount'], resultAGE[3]['PatientCount'], resultAGE[4]['PatientCount']],
+                                                numebrOfCases: result[0]['count(*)'],
+                                            })
+                                        }
+                                    })
+                                    .catch((err) => {
+                                        res.status(404).json({
+                                            success: false,
+                                            code: 404
+                                        })
+                                    })
+
+                            }
+                        }
+                        ).catch((err) => {
+                            res.status(404).json({
+                                success: false,
+                                code: 404
+                            })
+                        })
+                }
+                else {
+                    res.status(req.code).json({
+                        success: false,
+                        code: req.code
+                    })
+                }
+            })
+            .catch((err) => {
+                res.status(404).json({
+                    success: false,
+                    code: 404
+                })
+            })
     }
 }
 exports.alerts = (req, res, next) => {
