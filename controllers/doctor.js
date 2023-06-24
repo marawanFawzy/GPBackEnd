@@ -2,6 +2,8 @@ const User = require('../models/users')
 const Alert = require('../models/alerts')
 const Patient = require('../models/patients')
 const patient_diagnosis = require('../models/patient_diagnosis')
+const governorates = require('../models/governorates')
+const districts = require('../models/districts')
 const path = require('path')
 const fs = require('fs')
 const { count } = require('console')
@@ -111,7 +113,7 @@ exports.staticData = (req, res, next) => {
                                                 success: true,
                                                 code: req.code,
                                                 gender: [resultMF[0]['MaleCount'], resultMF[0]['FemaleCount']],
-                                                age: [resultAGE[0]['PatientCount'], resultAGE[1]['PatientCount'], 
+                                                age: [resultAGE[0]['PatientCount'], resultAGE[1]['PatientCount'],
                                                 resultAGE[2]['PatientCount'], resultAGE[3]['PatientCount'], resultAGE[4]['PatientCount']],
                                                 numebrOfCases: result[0]['count(*)'],
                                             })
@@ -206,5 +208,66 @@ exports.alert = (req, res, next) => {
             success: true,
             code: 200
         })
+    }
+}
+exports.getGovernorates = (req, res, next) => {
+    if (req.code === 401) {
+        console.log("no access")
+        res.status(req.code).json({
+            code: req.code,
+            success: false,
+
+        })
+    }
+    else {
+        governorates.findAll()
+            .then(([result, meta]) => {
+                if (result[0]) {
+                    res.status(200).json({
+                        success: true,
+                        governorateOptions: result,
+                        code: 200
+                    })
+                }
+                else
+                    throw new Error()
+            })
+            .catch((err) => {
+                res.status(404).json({
+                    code: 404,
+                    success: false,
+                })
+            })
+    }
+}
+exports.getDistricts = (req, res, next) => {
+    if (req.code === 401) {
+        console.log("no access")
+        res.status(req.code).json({
+            code: req.code,
+            success: false,
+
+        })
+    }
+    else {
+        console.log(req.params)
+        districts.findOne(req.params.Governorate)
+            .then(([result, meta]) => {
+                if (result[0]) {
+                    res.status(200).json({
+                        success: true,
+                        districtOptions: result,
+                        code: 200
+                    })
+                }
+                else
+                    throw new Error()
+            })
+            .catch((err) => {
+                res.status(404).json({
+                    code: 404,
+                    success: false,
+                })
+            })
     }
 }
