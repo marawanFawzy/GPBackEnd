@@ -1,21 +1,34 @@
 const db = require('../util/database')
 
 module.exports = class Diagnosis {
-    constructor() {
-
+    constructor(diagnosis, notes, Irritability, ALTERD_CONSCIOUSNESS
+        , BULGING_FONTANEL, fever, SIEZURE, Headache, Vomiting, NECK_RIGIDITY,
+        Governorate, District, symp, doctorID, patient_id) {
+        this.diagnosis = diagnosis
+        this.notes = notes
+        this.Irritability = Irritability
+        this.ALTERD_CONSCIOUSNESS = ALTERD_CONSCIOUSNESS
+        this.BULGING_FONTANEL = BULGING_FONTANEL
+        this.SIEZURE = SIEZURE
+        this.Headache = Headache
+        this.Vomiting = Vomiting
+        this.NECK_RIGIDITY = NECK_RIGIDITY
+        this.fever = fever
+        this.Governorate = Governorate
+        this.District = District
+        this.symp = symp
+        this.doctorID = doctorID
+        this.patient_id = patient_id
     }
     save() {
-        return db.execute(`INSERT INTO users (first_name,last_name,national_id,
-            specialization,gender,birth_date,email,hospital_id,
-            address,is_researcher,is_doctor,
-            is_observer,created_at) VALUES (?,?,?,?,?,CAST(? AS DATETIME) ,?,?,?,?,?,?,CURRENT_TIMESTAMP)` ,
-            [this.first_name, this.last_name, this.national_id,
-            this.specialization, this.gender, this.birth_date, this.email, this.hospital_id,
-            this.address, this.is_researcher, this.is_doctor,
-            this.is_observer])
-    }
-    update(id) {
-
+        return db.execute(`INSERT INTO patient_diagnosis (patient_id,report_date,district,
+            governorate,diagnosis,doctor_id,notes,
+            sym_days,fever,vomiting,headache,siezure,Bulging_Fontanel,Alterd_Consciousness,Neck_Rigidity,
+            Irritability,created_at) VALUES (?,CURRENT_TIMESTAMP,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)` ,
+            [this.patient_id, this.District,
+            this.Governorate, this.diagnosis, this.doctorID, this.notes, this.symp,
+            this.fever, this.Vomiting, this.Headache, this.SIEZURE, this.BULGING_FONTANEL, this.ALTERD_CONSCIOUSNESS, this.NECK_RIGIDITY,
+            this.Irritability])
     }
     static deleteById(id) {
         return db.execute('DELETE FROM patient_diagnosis WHERE diagnosis_id =?', [id])

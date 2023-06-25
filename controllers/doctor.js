@@ -7,6 +7,7 @@ const districts = require('../models/districts')
 const path = require('path')
 const fs = require('fs')
 const { count } = require('console')
+
 exports.userPages = (req, res, next) => {
     if (req.code === 401) {
         console.log("no access")
@@ -40,8 +41,6 @@ exports.userPages = (req, res, next) => {
     }
 };
 exports.addRecord = (req, res, next) => {
-    //TODO: add patients to the database and update if exists
-    //TODO: add diagnosis to the database
     if (req.code === 401) {
         console.log("no access")
         res.status(req.code).json({
@@ -51,12 +50,63 @@ exports.addRecord = (req, res, next) => {
         })
     }
     else {
-        console.log(req.body)
-        res.status(200).json({
-            success: true,
-            code: 200
-        })
+        const data = req.body
+        Patient.findOne(parseInt(req.body.Nid))
+            .then(([userId, meta]) => {
+                if (userId[0]) {
+                    console.log(data)
+                    const updatePatient = new Patient(data.Nid, data.Fname, data.Lname, data.gender, data.birth, data.address, data.occupation)
+                    console.log(userId[0]['patient_id'])
+                    updatePatient.update(userId[0]['patient_id'])
+                        .then(([result, meta]) => {
+                            console.log(result)
+                            console.log("user id " + req.session.user_id)
+                            res.status(200).json({
+                                success: true,
+                                code: 200
+                            })
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                            res.status(500).json({
+                                success: true,
+                                code: 500
+                            })
+                        })
+                }
+                else {
+                    const addedPatient = new Patient(data.Nid, data.Fname, data.Lname, data.gender, data.birth, data.address, data.occupation)
+                    addedPatient.save()
+                        .then(([result, meta]) => {
+                            console.log(result)
+                            res.status(200).json({
+                                success: true,
+                                code: 200
+                            })
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                            res.status(500).json({
+                                success: true,
+                                code: 500
+                            })
+                        })
+                }
+                const diagnosis = new patient_diagnosis(data.diagnosis, data.notes, data.Irritability, data.ALTERD_CONSCIOUSNESS
+                    , data.BULGING_FONTANEL, data.fever, data.SIEZURE, data.Headache, data.Vomiting, data.NECK_RIGIDITY,
+                    data.Governorate, data.District, data.symp, req.session.user_id, userId[0]['patient_id'])
+                diagnosis.save()
+                    .then(([res, meta]) => { console.log(res) })
+                    .catch((err) => console.log(err))
+            })
+            .catch((err) => {
+                res.status(404).json({
+                    code: 404,
+                    success: false,
+                })
+            })
     }
+
 }
 exports.dynamicData = (req, res, next) => {
     //TODO: get the data to render the dashboards 
@@ -151,44 +201,45 @@ exports.staticData = (req, res, next) => {
     }
 }
 exports.alerts = (req, res, next) => {
-    Alert.findAll().then(([alerts, meta]) => {
-        if (req.code === 401) {
-            console.log("no access")
-            res.status(req.code).json({
-                code: req.code,
+    Alert.findAll()
+        .then(([alerts, meta]) => {
+            if (req.code === 401) {
+                console.log("no access")
+                res.status(req.code).json({
+                    code: req.code,
+                    success: false,
+                })
+            }
+            else {
+                User.findOne(req.email)
+                    .then(([result, meta]) => {
+                        if (result[0]) {
+                            res.status(req.code).json({
+                                code: req.code,
+                                success: true,
+                                researcher: result[0]['is_researcher'],
+                                doctor: result[0]['is_doctor'],
+                                observer: result[0]['is_observer'],
+                                alerts: alerts
+                            })
+                        }
+                        else
+                            throw new Error()
+                    }).catch((err) => {
+                        res.status(404).json({
+                            code: 404,
+                            success: false,
+                        })
+                    })
+
+            }
+        }).catch((err) => {
+            console.log(err)
+            res.status(500).json({
+                code: 500,
                 success: false,
             })
-        }
-        else {
-            User.findOne(req.email)
-                .then(([result, meta]) => {
-                    if (result[0]) {
-                        res.status(req.code).json({
-                            code: req.code,
-                            success: true,
-                            researcher: result[0]['is_researcher'],
-                            doctor: result[0]['is_doctor'],
-                            observer: result[0]['is_observer'],
-                            alerts: alerts
-                        })
-                    }
-                    else
-                        throw new Error()
-                }).catch((err) => {
-                    res.status(404).json({
-                        code: 404,
-                        success: false,
-                    })
-                })
-
-        }
-    }).catch((err) => {
-        console.log(err)
-        res.status(500).json({
-            code: 500,
-            success: false,
-        })
-    });
+        });
 
 
 }

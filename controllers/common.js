@@ -23,7 +23,7 @@ exports.login = (req, res, next) => {
                             Atoken = jwt.sign(
                                 {
                                     email: email,
-                                    id: 1,
+                                    id: result[0]["user_id"],
                                     refreshOnly: false,
                                 }, 'someStrongKey',
                                 { expiresIn: '24h' }
@@ -36,7 +36,7 @@ exports.login = (req, res, next) => {
                                 req.session.loggedIn = true
                                 req.session.admin = false
                             }
-
+                            req.session.user_id = result[0]["user_id"]
                             res.status(200).json({ code: 200, Atoken: Atoken, success: true, email: email, admin: req.session.admin })
                         }
                         else {

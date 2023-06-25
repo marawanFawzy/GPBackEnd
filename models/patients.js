@@ -1,22 +1,28 @@
 const db = require('../util/database')
-const Diagnosis = require('./patient_diagnosis')
 
 module.exports = class Patient {
-    constructor() {
-
+    constructor(Nid, first_name, last_name, gender, birth_date, address, occupation) {
+        console.log("here")
+        this.Nid = Nid
+        this.first_name = first_name
+        this.last_name = last_name
+        this.gender = gender
+        this.birth_date = birth_date
+        this.address = address
+        this.occupation = occupation
     }
     save() {
-        //change
-        return db.execute(`INSERT INTO users (first_name,last_name,national_id,
-            specialization,gender,birth_date,email,hospital_id,
-            address,is_researcher,is_doctor,
-            is_observer,created_at) VALUES (?,?,?,?,?,CAST(? AS DATETIME) ,?,?,?,?,?,?,CURRENT_TIMESTAMP)` ,
-            [this.first_name, this.last_name, this.national_id,
-            this.specialization, this.gender, this.birth_date, this.email, this.hospital_id,
-            this.address, this.is_researcher, this.is_doctor,
-            this.is_observer])
+        return db.execute(`INSERT INTO patients (national_id,first_name,last_name,
+            gender,date_of_birth,address,occupation,created_at,
+            updated_at) VALUES (?,?,?,?,?,?,?,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)` ,
+            [this.Nid, this.first_name, this.last_name,
+            this.gender, this.birth_date, this.address, this.occupation])
     }
     update(id) {
+        return db.execute(`UPDATE patients
+        SET address = ?, occupation = ?, updated_at=CURRENT_TIMESTAMP 
+        WHERE patient_id=?;` ,
+            [this.address, this.occupation, id])
     }
     static deleteById(id) {
         return db.execute('DELETE FROM patients WHERE patient_id =?', [id])
@@ -24,7 +30,7 @@ module.exports = class Patient {
     static findAll() {
         return db.execute('SELECT * FROM patients')
     }
-    static findOne(id) {
-        return db.execute('SELECT * FROM patients WHERE patient_id =?', [id])
+    static findOne(Nid) {
+        return db.execute('SELECT patient_id FROM patients WHERE national_id =?', [Nid])
     }
 }

@@ -144,9 +144,6 @@ exports.editdoc = (req, res, next) => {
     const data = req.body
     if (req.code === 200) {
         const newUser = new User(data.Fname, data.Lname, data.Nid, data.specialization, data.gender, data.birth, data.email, 1, 1, data.researcher, data.doctor, data.observer)
-        console.log(data.Nid)
-        console.log(data.specialization)
-        console.log(data.email)
         newUser.update()
             .then(([result, meta]) => {
                 console.log(result)
