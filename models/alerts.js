@@ -4,8 +4,8 @@ module.exports = class Alert {
     constructor() {
 
     }
-    markRead() {
-        return db.execute('update alerts SET is_read=1 WHERE alert_id =?', [this.id])
+    static markRead(user_id, id) {
+        return db.execute('update alerts SET is_read=1 , viewer_id=? WHERE alert_id =?', [user_id, id])
     }
     static findAll() {
         return db.execute('SELECT * FROM eprediction.alerts order by alert_id desc;')

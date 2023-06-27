@@ -115,22 +115,61 @@ exports.dynamicData = (req, res, next) => {
         res.status(req.code).json({
             code: req.code,
             success: false,
-
         })
     }
     else {
-        res.status(200).json({
-            success: true,
-            code: 200,
-            dateMonth: '2016/2017',
-            dateMonth2: '2018/2019',
-            dataMonth: [50, 23, 55, 60, 90, 90, 67, 69, 50, 58, 36, 54],
-            dataMonth2: [90, 74, 73, 97, 92, 80, 77, 100, 77, 85, 37, 54],
-            dateWeeks: '2016/2017',
-            dateWeeks2: '2018/2019',
-            dataWeeks: [50, 23, 55, 54, 90, 90, 67, 69, 50, 58, 36, 54, 50, 23, 55, 54, 90, 90, 67, 69, 50, 58, 36, 54, 50, 23, 55, 54, 90, 90, 67, 69, 50, 58, 36, 54, 50, 23, 55, 54, 90, 90, 67, 69, 50, 58, 36, 54, 30, 24, 14, 16],
-            dataWeeks2: [90, 74, 73, 97, 92, 80, 77, 100, 77, 85, 37, 54, 90, 74, 73, 97, 92, 80, 77, 100, 77, 85, 37, 54, 90, 74, 73, 97, 92, 80, 77, 100, 77, 85, 37, 54, 90, 74, 73, 97, 92, 80, 77, 100, 77, 85, 37, 54, 67, 89, 23, 124]
-        })
+        const year1 = parseInt(req.params.year1);
+        const year2 = parseInt(req.params.year2);
+        console.log(year1)
+        console.log(year2)
+        patient_diagnosis.getCountsPermonthsFor2Years(year1, year2)
+            .then(([listOfMonths, meta]) => {
+                if (listOfMonths[0]) {
+                    const months = listOfMonths.map(dict => dict['count']);
+                    const first12 = months.slice(0, 12);
+                    const last12 = months.slice(12, 24);
+                    patient_diagnosis.getCountsPerWeekFor2Years(year1, year2)
+                        .then(([listOfWeeks, meta]) => {
+                            if (listOfWeeks[0]) {
+                                const weeks = listOfWeeks.map(dict => dict['count']);
+                                const first52 = weeks.slice(0, 52);
+                                const last52 = weeks.slice(52, 105);
+                                res.status(200).json({
+                                    success: true,
+                                    code: 200,
+                                    dateMonth: year1,
+                                    dateMonth2: year2,
+                                    dataMonth: first12,
+                                    dataMonth2: last12,
+                                    dateWeeks: year1,
+                                    dateWeeks2: year2,
+                                    dataWeeks: first52,
+                                    dataWeeks2: last52
+                                })
+                            }
+                            else throw new Error()
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                            res.status(500).json({
+                                code: 500,
+                                success: false,
+
+                            })
+                        })
+                }
+                else {
+                    throw new Error();
+                }
+            })
+            .catch((err) => {
+                console.log(err)
+                res.status(500).json({
+                    code: 500,
+                    success: false,
+
+                })
+            })
     }
 }
 exports.staticData = (req, res, next) => {
@@ -255,10 +294,22 @@ exports.alert = (req, res, next) => {
     }
     else {
         console.log(req.params)
-        res.status(200).json({
-            success: true,
-            code: 200
-        })
+        console.log(req.session.user_id)
+        Alert.markRead(req.session.user_id, req.params.id)
+            .then(([read, meta]) => {
+                console.log(read)
+                res.status(200).json({
+                    success: true,
+                    code: 200
+                })
+            }).catch((err) => {
+                console.log(err)
+                res.status(500).json({
+                    success: true,
+                    code: 500
+                })
+            })
+
     }
 }
 exports.getGovernorates = (req, res, next) => {
