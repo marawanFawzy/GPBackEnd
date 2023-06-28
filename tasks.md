@@ -9,5 +9,6 @@
 [x] 9- how to invalidate jwt server side even if not expired 
 [x] 10- add session and cookies 
 [x] 11- database creation and the avail. of adding sessions in rest api mode 
-[ ] 12- resolve all TODOs
-[ ] 13- vercel deploy
+[x] 12- resolve all TODOs
+[ ] 13- fix database where users don't have gov or district with fixing the model and remove hard data
+[ ] 14- fix database where hospitals hard coded or query list 

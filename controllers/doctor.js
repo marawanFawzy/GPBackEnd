@@ -40,7 +40,7 @@ exports.userPages = (req, res, next) => {
 
     }
 };
-exports.addRecord = (req, res, next) => {
+exports.addRecord = async (req, res, next) => {
     if (req.code === 401) {
         console.log("no access")
         res.status(req.code).json({
@@ -51,20 +51,26 @@ exports.addRecord = (req, res, next) => {
     }
     else {
         const data = req.body
-        Patient.findOne(parseInt(req.body.Nid))
+        await Patient.findOne(parseInt(req.body.Nid))
             .then(([userId, meta]) => {
                 if (userId[0]) {
                     console.log(data)
                     const updatePatient = new Patient(data.Nid, data.Fname, data.Lname, data.gender, data.birth, data.address, data.occupation)
-                    console.log(userId[0]['patient_id'])
                     updatePatient.update(userId[0]['patient_id'])
-                        .then(([result, meta]) => {
+                        .then(async ([result, meta]) => {
                             console.log(result)
-                            console.log("user id " + req.session.user_id)
-                            res.status(200).json({
-                                success: true,
-                                code: 200
-                            })
+                            const diagnosis = new patient_diagnosis(data.diagnosis, data.notes, data.Irritability, data.ALTERD_CONSCIOUSNESS
+                                , data.BULGING_FONTANEL, data.fever, data.SIEZURE, data.Headache, data.Vomiting, data.NECK_RIGIDITY,
+                                data.Governorate, data.District, data.symp, req.session.user_id, userId[0]['patient_id'])
+                            await diagnosis.save()
+                                .then(([ret, meta]) => {
+                                    console.log(ret);
+                                    res.status(200).json({
+                                        success: true,
+                                        code: 200
+                                    })
+                                })
+                                .catch((err) => console.log(err))
                         })
                         .catch((err) => {
                             console.log(err)
@@ -77,12 +83,21 @@ exports.addRecord = (req, res, next) => {
                 else {
                     const addedPatient = new Patient(data.Nid, data.Fname, data.Lname, data.gender, data.birth, data.address, data.occupation)
                     addedPatient.save()
-                        .then(([result, meta]) => {
-                            console.log(result)
-                            res.status(200).json({
-                                success: true,
-                                code: 200
-                            })
+                        .then(async ([result, meta]) => {
+                            console.log(result['insertId'])
+                            const diagnosis = new patient_diagnosis(data.diagnosis, data.notes, data.Irritability, data.ALTERD_CONSCIOUSNESS
+                                , data.BULGING_FONTANEL, data.fever, data.SIEZURE, data.Headache, data.Vomiting, data.NECK_RIGIDITY,
+                                data.Governorate, data.District, data.symp, req.session.user_id, result['insertId'])
+                            await diagnosis.save()
+                                .then(([ret, meta]) => {
+                                    console.log(ret);
+                                    res.status(200).json({
+                                        success: true,
+                                        code: 200
+                                    })
+                                })
+                                .catch((err) => console.log(err))
+
                         })
                         .catch((err) => {
                             console.log(err)
@@ -92,18 +107,9 @@ exports.addRecord = (req, res, next) => {
                             })
                         })
                 }
-                const diagnosis = new patient_diagnosis(data.diagnosis, data.notes, data.Irritability, data.ALTERD_CONSCIOUSNESS
-                    , data.BULGING_FONTANEL, data.fever, data.SIEZURE, data.Headache, data.Vomiting, data.NECK_RIGIDITY,
-                    data.Governorate, data.District, data.symp, req.session.user_id, userId[0]['patient_id'])
-                diagnosis.save()
-                    .then(([res, meta]) => { console.log(res) })
-                    .catch((err) => console.log(err))
             })
             .catch((err) => {
-                res.status(404).json({
-                    code: 404,
-                    success: false,
-                })
+                console.log(err)
             })
     }
 
