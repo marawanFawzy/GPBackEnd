@@ -8,8 +8,9 @@ router.get('/dynamicData/:year1/:year2', auth.check, doctorController.dynamicDat
 router.get('/staticData', auth.check, doctorController.staticData)
 router.get('/alerts', auth.check, doctorController.alerts)
 router.get('/alert/:id', auth.check, doctorController.alert)
-router.get('/getGovernorates', auth.check, doctorController.getGovernorates)
-router.get('/getDistricts?:Governorate', auth.check, doctorController.getDistricts)
+router.get('/loadMyProfile', auth.check, doctorController.loadMyProfile)
+router.get('/getGovernorates', doctorController.getGovernorates)
+router.get('/getDistricts?:Governorate', doctorController.getDistricts)
 router.post('/addRecord', auth.check, doctorController.addRecord)
 
 

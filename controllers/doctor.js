@@ -313,63 +313,71 @@ exports.alert = (req, res, next) => {
     }
 }
 exports.getGovernorates = (req, res, next) => {
-    if (req.code === 401) {
-        console.log("no access")
-        res.status(req.code).json({
-            code: req.code,
-            success: false,
-
-        })
-    }
-    else {
-        governorates.findAll()
-            .then(([result, meta]) => {
-                if (result[0]) {
-                    res.status(200).json({
-                        success: true,
-                        governorateOptions: result,
-                        code: 200
-                    })
-                }
-                else
-                    throw new Error()
-            })
-            .catch((err) => {
-                res.status(404).json({
-                    code: 404,
-                    success: false,
+    governorates.findAll()
+        .then(([result, meta]) => {
+            if (result[0]) {
+                res.status(200).json({
+                    success: true,
+                    governorateOptions: result,
+                    code: 200
                 })
+            }
+            else
+                throw new Error()
+        })
+        .catch((err) => {
+            res.status(404).json({
+                code: 404,
+                success: false,
             })
-    }
+        })
+
 }
 exports.getDistricts = (req, res, next) => {
-    if (req.code === 401) {
-        console.log("no access")
-        res.status(req.code).json({
-            code: req.code,
-            success: false,
-
-        })
-    }
-    else {
-        console.log(req.params)
-        districts.findOne(req.params.Governorate)
-            .then(([result, meta]) => {
-                if (result[0]) {
-                    res.status(200).json({
-                        success: true,
-                        districtOptions: result,
-                        code: 200
-                    })
-                }
-                else
-                    throw new Error()
-            })
-            .catch((err) => {
-                res.status(404).json({
-                    code: 404,
-                    success: false,
+    console.log(req.params)
+    districts.findOne(req.params.Governorate)
+        .then(([result, meta]) => {
+            if (result[0]) {
+                res.status(200).json({
+                    success: true,
+                    districtOptions: result,
+                    code: 200
                 })
+            }
+            else
+                throw new Error()
+        })
+        .catch((err) => {
+            res.status(404).json({
+                code: 404,
+                success: false,
             })
-    }
+        })
+
+}
+exports.loadMyProfile = (req, res, next) => {
+    User.findOneByiD(req.session.user_id)
+        .then(([result, meta]) => {
+            if (!result[0])
+                throw new Error()
+            else if (req.code === 200) {
+                res.status(200).json({
+                    success: true,
+                    code: 200,
+                    data: result[0]
+                })
+            }
+            else {
+                res.status(500).json({
+                    success: false,
+                    code: 500
+                })
+            }
+        })
+        .catch((err) => {
+            res.status(404).json({
+                success: false,
+                code: 404
+            })
+        })
 }

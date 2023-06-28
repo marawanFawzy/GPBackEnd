@@ -36,7 +36,7 @@ exports.downloadFile = (req, res, next) => {
 exports.search = (req, res, next) => {
     console.log(req.body)
     if (req.code === 200)
-        User.findOneByiD(req.body.Nid)
+        User.findOneByNiD(req.body.Nid)
             .then(([result, meta]) => {
                 if (result[0]) {
                     res.status(req.code).json({
@@ -81,7 +81,7 @@ exports.adminPages = (req, res, next) => {
     }
 }
 exports.loadDoctorData = (req, res, next) => {
-    User.findOneByiD(req.params.Nid)
+    User.findOneByNiD(req.params.Nid)
         .then(([result, meta]) => {
             if (!result[0])
                 throw new Error()
