@@ -109,7 +109,7 @@ exports.loadDoctorData = (req, res, next) => {
 exports.addDoctor = (req, res, next) => {
     const data = req.body
     try {
-        const newUser = new User(data.Fname, data.Lname, data.Nid, data.specialization, data.gender, data.birth, data.email, 1, 1, data.researcher, data.doctor, data.observer)
+        const newUser = new User(data.Fname, data.Lname, data.Nid, data.specialization, data.gender, data.birth, data.email, data.Hosbital, data.address, data.researcher, data.doctor, data.observer, data.Governorate, data.District)
         newUser.save()
             .then(() => {
                 console.log("added")
@@ -143,7 +143,7 @@ exports.editdoc = (req, res, next) => {
     console.log(req.body)
     const data = req.body
     if (req.code === 200) {
-        const newUser = new User(data.Fname, data.Lname, data.Nid, data.specialization, data.gender, data.birth, data.email, 1, 1, data.researcher, data.doctor, data.observer)
+        const newUser = new User(data.Fname, data.Lname, data.Nid, data.specialization, data.gender, data.birth, data.email, data.Hosbital, data.address, data.researcher, data.doctor, data.observer, data.Governorate, data.District)
         newUser.update()
             .then(([result, meta]) => {
                 console.log(result)

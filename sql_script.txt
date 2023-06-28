@@ -555,20 +555,6 @@ CHANGE COLUMN city_name_en district VARCHAR(200);
 CREATE INDEX district_index ON egy_loc(district);
 CREATE INDEX governorate_index ON egy_loc(governorate);
 
-CREATE TABLE hospitals (
-  hospital_id BIGINT PRIMARY KEY auto_increment,
-  hospital_name VARCHAR(255),
-  location_id BIGINT,
-  address  VARCHAR(255),
-  district varchar(30),
-  governorate varchar(30),
-  phone_number VARCHAR(20),
-  FOREIGN KEY (district) REFERENCES egy_loc(district),
-  FOREIGN KEY (governorate) REFERENCES egy_loc(governorate),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP
-);
-
 CREATE TABLE patients (
   patient_id BIGINT PRIMARY KEY not null unique auto_increment ,
   national_id VARCHAR(255) unique not null,
@@ -594,13 +580,14 @@ CREATE TABLE users (
   specialization VARCHAR(255) ,
   gender VARCHAR(10) ,
   email VARCHAR(100) UNIQUE,
-  hospital_id BIGINT ,
-  address  VARCHAR(255),
+  hospital VARCHAR(255),
+  Governorate  VARCHAR(50),
+  District  VARCHAR(50),
+  address  VARCHAR(100),
   is_admin BOOLEAN DEFAULT 0,
   is_researcher BOOLEAN DEFAULT 0,
   is_doctor BOOLEAN DEFAULT 0,
   is_observer BOOLEAN DEFAULT 0,
-  FOREIGN KEY (hospital_id) REFERENCES hospitals(hospital_id),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
